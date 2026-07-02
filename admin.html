@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a192f">
+    <title>AL-ARABI TEACHER OS v36.6 | Administrator Access</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* ============================================
+           AL-ARABI TEACHER OS v36.6
+           Premium Admin Login - Design System
+           ============================================ */
+
+        :root {
+            --primary: #4169E1;
+            --primary-glow: rgba(65, 105, 225, 0.55);
+            --secondary: #50C878;
+            --accent: #9370DB;
+            --highlight: #FFD700;
+            --danger: #ff4d6d;
+            --dark-0: #050b1a;
+            --dark-1: #0a192f;
+            --dark-2: #112240;
+            --glass: rgba(255, 255, 255, 0.06);
+            --glass-strong: rgba(255, 255, 255, 0.10);
+            --glass-border: rgba(255, 255, 255, 0.14);
+            --glass-border-strong: rgba(255, 255, 255, 0.22);
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.72);
+            --text-muted: rgba(255, 255, 255, 0.48);
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overscroll-behavior: none;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark-0);
+            color: var(--text-main);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Allow selection inside inputs */
+        input, textarea { user-select: text; -webkit-user-select: text; }
+
+        /* ============================================
+           BACKGROUND SYSTEM (5-image crossfade)
+           ============================================ */
+        .bg-system {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            overflow: hidden;
+            background: var(--dark-0);
+        }
+
+        .bg-layer {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            will-change: opacity;
+            transform: scale(1.05);
+        }
+
+        .bg-layer.active { opacity: 1; }
+
+        .bg-layer::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            backdrop-filter: blur(14px) saturate(120%);
+            -webkit-backdrop-filter: blur(14px) saturate(120%);
+            background: rgba(5, 11, 26, 0.55);
+        }
+
+        .bg-layer::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at top, rgba(65, 105, 225, 0.18), transparent 55%),
+                radial-gradient(ellipse at bottom, rgba(147, 112, 219, 0.14), transparent 55%),
+                linear-gradient(180deg, rgba(5, 11, 26, 0.35) 0%, rgba(5, 11, 26, 0.75) 100%);
+        }
+
+        /* Vignette */
+        .bg-vignette {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%);
+        }
+
+        /* Particles canvas */
+        #particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ============================================
+           MAIN LAYOUT
+           ============================================ */
+        .auth-wrapper {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+            animation: wrapperIn 0.9s var(--ease) both;
+        }
+
+        @keyframes wrapperIn {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================
+           LOGO
+           ============================================ */
+        .logo-wrap {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .logo-ring {
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            box-shadow:
+                0 0 30px var(--primary-glow),
+                0 0 60px rgba(65, 105, 225, 0.25),
+                inset 0 0 20px rgba(65, 105, 225, 0.15);
+            animation: ringPulse 3.5s ease-in-out infinite;
+        }
+
+        .logo-ring::before {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            border-radius: 50%;
+            border: 1px dashed rgba(255, 255, 255, 0.12);
+            animation: spin 30s linear infinite;
+        }
+
+        .logo-core {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #fff;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        .logo-core img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-10px); }
+        }
+
+        @keyframes ringPulse {
+            0%, 100% { box-shadow: 0 0 30px var(--primary-glow), 0 0 60px rgba(65, 105, 225, 0.25), inset 0 0 20px rgba(65, 105, 225, 0.15); }
+            50%      { box-shadow: 0 0 45px var(--primary-glow), 0 0 90px rgba(65, 105, 225, 0.35), inset 0 0 25px rgba(65, 105, 225, 0.22); }
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ============================================
+           LOGIN CARD (Glassmorphism)
+           ============================================ */
+        .login-card {
+            width: 100%;
+            background: var(--glass);
+            backdrop-filter: blur(28px) saturate(160%);
+            -webkit-backdrop-filter: blur(28px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 36px 30px 28px;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.45),
+                0 0 40px rgba(65, 105, 225, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            animation: cardIn 0.9s var(--ease) 0.15s both;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Glass reflection */
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -50%;
+            width: 200%; height: 50%;
+            background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.06) 50%, transparent 70%);
+            pointer-events: none;
+            transform: rotate(8deg);
+        }
+
+        /* Top accent line */
+        .login-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 10%; right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #fff 0%, #b8c5ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        /* ============================================
+           FORM
+           ============================================ */
+        .form-group {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            margin-left: 4px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap i.field-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            transition: color 0.3s var(--ease);
+            pointer-events: none;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 46px 14px 44px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s var(--ease);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            background: rgba(65, 105, 225, 0.08);
+            box-shadow: 0 0 0 4px rgba(65, 105, 225, 0.12), 0 0 20px rgba(65, 105, 225, 0.15);
+        }
+
+        .form-input:focus ~ i.field-icon {
+            color: var(--primary);
+        }
+
+        .toggle-pass {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 6px;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        .toggle-pass:hover { color: var(--primary); }
+
+        /* Row: Remember + Forgot */
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 6px 0 22px;
+            font-size: 0.82rem;
+        }
+
+        .checkbox-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--text-dim);
+            user-select: none;
+        }
+
+        .checkbox-wrap input {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1.5px solid var(--glass-border-strong);
+            border-radius: 4px;
+            background: rgba(255,255,255,0.03);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+
+        .checkbox-wrap input:checked {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .checkbox-wrap input:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .forgot-link {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover { color: var(--primary); }
+
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            position: relative;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 0.98rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s var(--ease);
+            box-shadow: 0 10px 30px rgba(65, 105, 225, 0.35);
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(65, 105, 225, 0.5);
+        }
+
+        .login-btn:active:not(:disabled) { transform: translateY(0); }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .login-btn .btn-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: opacity 0.3s;
+        }
+
+        .login-btn .btn-loader {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .login-btn.loading .btn-text { opacity: 0; }
+        .login-btn.loading .btn-loader { opacity: 1; }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Ripple */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.45);
+            transform: scale(0);
+            animation: rippleAnim 0.7s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes rippleAnim {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        /* Error message */
+        .error-msg {
+            background: rgba(255, 77, 109, 0.1);
+            border: 1px solid rgba(255, 77, 109, 0.3);
+            color: #ffb3c1;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            margin-bottom: 16px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            animation: shake 0.4s;
+        }
+
+        .error-msg.show { display: flex; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        /* Footer version */
+        .card-footer {
+            text-align: center;
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .brand-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+
+        .version-tag {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 3px;
+            letter-spacing: 2px;
+        }
+
+        /* ============================================
+           VERIFICATION OVERLAY
+           ============================================ */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 11, 26, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: overlayIn 0.4s var(--ease);
+        }
+
+        .overlay.show { display: flex; }
+
+        @keyframes overlayIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        .verify-box {
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            animation: boxIn 0.6s var(--ease-bounce);
+        }
+
+        @keyframes boxIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Security Icon */
+        .security-icon {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 28px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .security-icon .ring-outer,
+        .security-icon .ring-inner {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid transparent;
+        }
+
+        .security-icon .ring-outer {
+            inset: 0;
+            border-top-color: var(--primary);
+            border-right-color: var(--primary);
+            animation: spin 1.6s linear infinite;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .security-icon .ring-inner {
+            inset: 14px;
+            border-bottom-color: var(--accent);
+            border-left-color: var(--accent);
+            animation: spin 1.2s linear infinite reverse;
+        }
+
+        .security-icon .core {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 0 40px var(--primary-glow);
+            animation: corePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes corePulse {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.08); }
+        }
+
+        .verify-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .verify-status {
+            font-size: 0.88rem;
+            color: var(--text-dim);
+            min-height: 22px;
+            margin-bottom: 22px;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+            transition: colorcolor 0.3s;
+        }
+
+        /* Progress bar */
+        .progress-track {
+            width: 100%;
+            height: 5px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+            background-size: 200% 100%;
+            border-radius: 10px;
+            transition: width 0.4s var(--ease);
+            box-shadow: 0 0 12px var(--primary-glow);
+            animation: shimmer 2s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: 0% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .progress-percent {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .verify-footer {
+            margin-top: 22px;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .verify-footer i { color: var(--secondary); margin-right: 6px; }
+
+        /* ============================================
+           SUCCESS OVERLAY
+           ============================================ */
+        .result-box {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            animation: boxIn 0.6s var(--ease-bounce);
+        }
+
+        .check-circle {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 22px;
+            border-radius: 50%;
+            background: rgba(80, 200, 120, 0.12);
+            border: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px rgba(80, 200, 120, 0.4);
+            animation: popIn 0.5s var(--ease-bounce);
+        }
+
+        .check-circle svg {
+            width: 48px;
+            height: 48px;
+        }
+
+        .check-circle svg path {
+            stroke: var(--secondary);
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            stroke-dasharray: 60;
+            stroke-dashoffset: 60;
+            animation: drawCheck 0.6s 0.2s var(--ease) forwards;
+        }
+
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes popIn {
+            0%   { transform: scale(0); opacity: 0; }
+            70%  { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .result-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .result-sub {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 22px;
+        }
+
+        .redirect-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .redirect-text .dot-loader span {
+            animation: dotBlink 1.4s infinite;
+            display: inline-block;
+        }
+        .redirect-text .dot-loader span:nth-child(2) { animation-delay: 0.2s; }
+        .redirect-text .dot-loader span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dotBlink {
+            0%, 60%, 100% { opacity: 0.2; }
+            30% { opacity: 1; }
+        }
+
+        /* ============================================
+           ERROR OVERLAY
+           ============================================ */
+        .x-circle {
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 22px;
+            border-radius: 50%;
+            background: rgba(255, 77, 109, 0.12);
+            border: 2px solid var(--danger);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px rgba(255, 77, 109, 0.4);
+            animation: popIn 0.5s var(--ease-bounce);
+        }
+
+        .x-circle svg {
+            width: 44px;
+            height: 44px;
+        }
+
+        .x-circle svg line {
+            stroke: var(--danger);
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-dasharray: 40;
+            stroke-dashoffset: 40;
+            animation: drawX 0.4s 0.2s var(--ease) forwards;
+        }
+
+        @keyframes drawX {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .error-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--danger);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .error-sub {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            margin-bottom: 22px;
+        }
+
+        .retry-btn {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--glass-border-strong);
+            color: white;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .retry-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--primary);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 480px) {
+            body { padding: 16px; }
+            .login-card { padding: 28px 22px 22px; border-radius: 20px; }
+            .card-title { font-size: 1.2rem; }
+            .logo-wrap { width: 95px; height: 95px; }
+            .form-input { padding: 13px 42px 13px 42px; font-size: 0.92rem; }
+            .login-btn { padding: 14px; font-size: 0.9rem; }
+            .security-icon { width: 95px; height: 95px; }
+            .security-icon .core { width: 48px; height: 48px; font-size: 1.3rem; }
+        }
+
+        @media (max-height: 680px) {
+            .auth-wrapper { gap: 18px; }
+            .logo-wrap { width: 85px; height: 85px; }
+            .login-card { padding: 24px 22px 20px; }
+            .card-header { margin-bottom: 20px; }
+        }
+
+        /* Focus visible for accessibility */
+        .form-input:focus-visible,
+        .login-btn:focus-visible,
+        .retry-btn:focus-visible,
+        .checkbox-wrap input:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============ BACKGROUND SYSTEM ============ -->
+    <div class="bg-system" aria-hidden="true">
+        <div class="bg-layer" data-bg="background1.jpg" style="background-image: url('background1.png');"></div>
+        <div class="bg-layer" data-bg="background2.png" style="background-image: url('background2.png');"></div>
+        <div class="bg-layer" data-bg="background3.png" style="background-image: url('background3.png');"></div>
+        <div class="bg-layer" data-bg="background4.png" style="background-image: url('background4.png');"></div>
+        <div class="bg-layer" data-bg="background5.png" style="background-image: url('background5.png');"></div>
+    </div>
+    <div class="bg-vignette" aria-hidden="true"></div>
+    <canvas id="particles" aria-hidden="true"></canvas>
+
+    <!-- ============ MAIN AUTH WRAPPER ============ -->
+    <main class="auth-wrapper">
+
+        <!-- Logo -->
+        <div class="logo-wrap" aria-label="AL-ARABI Teacher OS Logo">
+            <div class="logo-ring"></div>
+            <div class="logo-core">
+                <img src="assets/images/logo.png" alt="Logo"
+                     onerror="this.onerror=null;this.src='https://cdn-icons-png.flaticon.com/512/3426/3426653.png';">
+            </div>
+        </div>
+
+        <!-- Login Card -->
+        <section class="login-card" aria-labelledby="cardTitle">
+            <header class="card-header">
+                <h1 class="card-title" id="cardTitle">Administrator Login</h1>
+                <p class="card-subtitle">Secure Access Portal</p>
+            </header>
+
+            <div class="error-msg" id="errorMsg" role="alert">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText">Invalid credentials</span>
+            </div>
+
+            <form id="loginForm" autocomplete="on" novalidate>
+                <div class="form-group">
+                    <label class="form-label" for="adminId">Administrator ID</label>
+                    <div class="input-wrap">
+                        <input
+                            type="text"
+                            id="adminId"
+                            name="adminId"
+                            class="form-input"
+                            placeholder="Enter your administrator ID"
+                            autocomplete="username"
+                            required
+                            aria-required="true">
+                        <i class="fas fa-user-shield field-icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="input-wrap">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-input"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                            aria-required="true">
+                        <i class="fas fa-lock field-icon"></i>
+                        <button type="button" class="toggle-pass" id="togglePass" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label class="checkbox-wrap">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember Me</span>
+                    </label>
+                    <a href="#" class="forgot-link" onclick="alert('Please contact the system administrator to reset your password.');return false;">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span class="btn-text">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Secure Login</span>
+                    </span>
+                    <span class="btn-loader"><span class="spinner"></span></span>
+                </button>
+            </form>
+
+            <footer class="card-footer">
+                <div class="brand-name">AL-ARABI Teacher OS</div>
+                <div class="version-tag">VERSION 36.6</div>
+            </footer>
+        </section>
+    </main>
+
+    <!-- ============ VERIFICATION OVERLAY ============ -->
+    <div class="overlay" id="verifyOverlay" role="status" aria-live="polite">
+        <div class="verify-box">
+            <div class="security-icon">
+                <div class="ring-outer"></div>
+                <div class="ring-inner"></div>
+                <div class="core"><i class="fas fa-shield-halved"></i></div>
+            </div>
+            <h2 class="verify-title">Security Verification</h2>
+            <p class="verify-status" id="verifyStatus">Initializing secure session...</p>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-percent"><span id="progressPercent">0</span>%</div>
+            <div class="verify-footer">
+                <i class="fas fa-lock"></i>
+                <span>End-to-End Encrypted Session</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ SUCCESS OVERLAY ============ -->
+    <div class="overlay" id="successOverlay">
+        <div class="result-box">
+            <div class="check-circle">
+                <svg viewBox="0 0 52 52">
+                    <path d="M14 27 L22 35 L38 17"/>
+                </svg>
+            </div>
+            <h2 class="result-title">Administrator Verified Successfully</h2>
+            <p class="result-sub">Welcome back.</p>
+            <p class="redirect-text">
+                Redirecting to dashboard
+                <span class="dot-loader"><span>.</span><span>.</span><span>.</span></span>
+            </p>
+        </div>
+    </div>
+
+    <!-- ============ ERROR OVERLAY ============ -->
+    <div class="overlay" id="errorOverlay">
+        <div class="result-box">
+            <div class="x-circle">
+                <svg viewBox="0 0 52 52">
+                    <line x1="16" y1="16" x2="36" y2="36"/>
+                    <line x1="36" y1="16" x2="16" y2="36"/>
+                </svg>
+            </div>
+            <h2 class="error-title" id="errorTitle">Access Denied</h2>
+            <p class="error-sub" id="errorSub">Invalid Administrator Credentials</p>
+            <button type="button" class="retry-btn" id="retryBtn">
+                <i class="fas fa-rotate-left"></i> Return to Login
+            </button>
+        </div>
+    </div>
+<script>
+/**
+ * ============================================================================
+ * AL-ARABI TEACHER OS v36.6
+ * Enterprise Authentication System
+ * ============================================================================
+ * Secure, modular, and scalable authentication architecture for the 
+ * administrator dashboard. Handles session management, strict database 
+ * verification, route protection, and enterprise-grade security protocols.
+ * ============================================================================
+ */
+(() => {
+    'use strict';
+
+    // ==========================================
+    // 1. CONFIGURATION & CONSTANTS
+    // ==========================================
+    const CONFIG = Object.freeze({
+        SUPABASE_URL: 'https://qqqxxbixuzdihfnmutpp.supabase.co',
+        SUPABASE_ANON_KEY: 'sb_publishable_oAqdfpvMyYEdeMzZuIb57w_muvQROpY',
+        DASHBOARD_URL: 'dashboard.html',
+        LOGIN_URL: 'login.html',
+        IDLE_TIMEOUT: 30 * 60 * 1000, // 30 minutes in milliseconds
+        DEFAULT_EMAIL_DOMAIN: '@al-arabi.edu'
+    });
+
+    // Global State
+    let supabaseClient = null;
+    let currentAdmin = null;
+    let idleTimer = null;
+
+    // ==========================================
+    // 2. SUPABASE INITIALIZATION & SESSION LISTENER
+    // ==========================================
+    
+    /**
+     * Initialize Supabase Client and setup Auth State Listener
+     * @returns {boolean} Success status
+     */
+    function initializeSupabase() {
+        if (!window.supabase || !window.supabase.createClient) {
+            console.error('[Auth] Supabase SDK failed to load.');
+            return false;
+        }
+
+        try {
+            supabaseClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY, {
+                auth: {
+                    autoRefreshToken: true,
+                    persistSession: true,
+                    detectSessionInUrl: true,
+                    storage: window.sessionStorage // Use sessionStorage for higher security
+                }
+            });
+
+            // Listen to authentication state changes
+            supabaseClient.auth.onAuthStateChange((event, session) => {
+                if (event === 'SIGNED_OUT') {
+                    clearLocalSession();
+                    redirectToLogin();
+                } else if (event === 'TOKEN_REFRESHED') {
+                    console.log('[Auth] Session token successfully refreshed.');
+                } else if (event === 'EXPIRED_SESSION') {
+                    logoutAdministrator('Your session has expired. Please login again.');
+                }
+            });
+
+            console.log('[Auth] Supabase client initialized successfully.');
+            return true;
+        } catch (error) {
+            console.error('[Auth] Initialization failed:', error);
+            return false;
+        }
+    }
+
+    // ==========================================
+    // 3. INPUT VALIDATION & SECURITY
+    // ==========================================
+
+    /**
+     * Sanitize input string to prevent XSS and HTML injection
+     * @param {string} str - Raw input string
+     * @returns {string} Sanitized string
+     */
+    function sanitizeInput(str) {
+        if (typeof str !== 'string') return '';
+        return str.trim().replace(/[<>"'&]/g, (match) => {
+            const escapeMap = { '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '&': '&amp;' };
+            return escapeMap[match];
+        });
+    }
+
+    /**
+     * Validate email format using regex
+     * @param {string} email 
+     * @returns {boolean}
+     */
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+
+    /**
+     * Validate login inputs before submission
+     * @param {string} adminId 
+     * @param {string} password 
+     * @returns {Object} Validation result
+     */
+    function validateInputs(adminId, password) {
+        if (!adminId) return { valid: false, message: 'Administrator ID is required.' };
+        if (!password) return { valid: false, message: 'Password is required.' };
+        
+        // Check if it's an email or a short ID
+        if (adminId.includes('@')) {
+            if (!validateEmail(adminId)) {
+                return { valid: false, message: 'Invalid email format.' };
+            }
+        } else {
+            if (adminId.length < 3) {
+                return { valid: false, message: 'Invalid Administrator ID format.' };
+            }
+        }
+
+        if (password.length < 6) {
+            return { valid: false, message: 'Password must be at least 6 characters.' };
+        }
+
+        return { valid: true };
+    }
+
+    // ==========================================
+    // 4. UI CONTROL & VERIFICATION SEQUENCE
+    // ==========================================
+    
+    // Cache DOM elements
+    const dom = {
+        loginForm: document.getElementById('loginForm'),
+        adminIdInput: document.getElementById('adminId'),
+        passwordInput: document.getElementById('password'),
+        togglePass: document.getElementById('togglePass'),
+        rememberMe: document.getElementById('rememberMe'),
+        loginBtn: document.getElementById('loginBtn'),
+        errorMsg: document.getElementById('errorMsg'),
+        errorText: document.getElementById('errorText'),
+        verifyOverlay: document.getElementById('verifyOverlay'),
+        verifyStatus: document.getElementById('verifyStatus'),
+        progressFill: document.getElementById('progressFill'),
+        progressPercent: document.getElementById('progressPercent'),
+        successOverlay: document.getElementById('successOverlay'),
+        errorOverlay: document.getElementById('errorOverlay'),
+        errorTitle: document.getElementById('errorTitle'),
+        errorSub: document.getElementById('errorSub'),
+        retryBtn: document.getElementById('retryBtn')
+    };
+
+    function showVerification() {
+        dom.verifyOverlay.classList.add('show');
+        updateVerificationProgress(0, 'Initializing secure connection...');
+    }
+
+    function hideVerification() {
+        dom.verifyOverlay.classList.remove('show');
+    }
+
+    function updateVerificationProgress(percent, text) {
+        dom.progressFill.style.width = `${percent}%`;
+        dom.progressPercent.textContent = Math.round(percent);
+        if (text) dom.verifyStatus.textContent = text;
+    }
+
+    function showError(title, message) {
+        hideVerification();
+        dom.errorTitle.textContent = title;
+        dom.errorSub.textContent = message;
+        dom.errorOverlay.classList.add('show');
+        resetLoginButton();
+    }
+
+    function showSuccess() {
+        hideVerification();
+        dom.successOverlay.classList.add('show');
+        setTimeout(() => {
+            window.location.href = CONFIG.DASHBOARD_URL;
+        }, 2000);
+    }
+
+    function showInlineError(msg) {
+        dom.errorText.textContent = msg;
+        dom.errorMsg.classList.add('show');
+        setTimeout(() => dom.errorMsg.classList.remove('show'), 5000);
+    }
+
+    function disableLoginButton() {
+        dom.loginBtn.disabled = true;
+        dom.loginBtn.classList.add('loading');
+    }
+
+    function resetLoginButton() {
+        dom.loginBtn.disabled = false;
+        dom.loginBtn.classList.remove('loading');
+    }
+
+    /**
+     * Run the 8-second visual verification sequence while auth happens in background
+     * @param {Promise} authPromise - The actual authentication promise
+     */
+    async function runVerificationSequence(authPromise) {
+        showVerification();
+        
+        const steps = [
+            { pct: 10, text: 'Initializing Secure Connection...', delay: 800 },
+            { pct: 20, text: 'Establishing TLS Session...', delay: 800 },
+            { pct: 30, text: 'Connecting to Supabase...', delay: 900 },
+            { pct: 45, text: 'Validating Credentials...', delay: 1000 },
+            { pct: 60, text: 'Verifying Administrator Record...', delay: 1000 },
+            { pct: 75, text: 'Checking User Status...', delay: 900 },
+            { pct: 85, text: 'Loading Administrator Permissions...', delay: 800 },
+            { pct: 95, text: 'Creating Secure Session...', delay: 800 },
+            { pct: 100, text: 'Authentication Successful.', delay: 500 }
+        ];
+
+        let authCompleted = false;
+        let authResult = null;
+        let authError = null;
+
+        // Start auth in background
+        authPromise
+            .then(res => { authResult = res; authCompleted = true; })
+            .catch(err => { authError = err; authCompleted = true; });
+
+        // Animate steps
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            
+            // If auth failed early, stop animation and throw error
+            if (authError && i > 3) {
+                throw authError;
+            }
+
+            await animateProgress(step.pct, step.delay);
+            dom.verifyStatus.textContent = step.text;
+            
+            // If this is the last step, wait for auth to finish if it hasn't
+            if (i === steps.length - 1) {
+                while (!authCompleted) {
+                    await sleep(100);
+                }
+                if (authError) throw authError;
+                return authResult;
+            }
+            
+            await sleep(100);
+        }
+
+        return authResult;
+    }
+
+    function animateProgress(targetPct, duration) {
+        return new Promise(resolve => {
+            const startPct = parseFloat(dom.progressFill.style.width) || 0;
+            const startTime = performance.now();
+
+            function tick(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Ease out quad
+                const ease = 1 - (1 - progress) * (1 - progress);
+                const currentPct = startPct + (targetPct - startPct) * ease;
+                
+                updateVerificationProgress(currentPct);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(tick);
+                } else {
+                    resolve();
+                }
+            }
+            requestAnimationFrame(tick);
+        });
+    }
+
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+    // ==========================================
+    // 5. CORE AUTHENTICATION & DATABASE VERIFICATION
+    // ==========================================
+
+    /**
+     * Authenticate user with Supabase Auth
+     * @param {string} email 
+     * @param {string} password 
+     * @returns {Promise<Object>} User object
+     */
+    async function loginAdministrator(email, password) {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            throw mapSupabaseError(error);
+        }
+        if (!data || !data.user) {
+            throw new Error('Authentication failed. No user data returned.');
+        }
+
+        return data.user;
+    }
+
+    /**
+     * Verify the user is an active administrator in the database
+     * @param {string} userId - Supabase Auth User ID
+     * @returns {Promise<Object>} Administrator record
+     */
+    async function verifyAdministrator(userId) {
+        const { data, error } = await supabaseClient
+            .from('admins')
+            .select('id, admin_id, full_name, role, account_status, login_enabled, deleted_at, email')
+            .eq('id', userId)
+            .maybeSingle();
+
+        if (error) {
+            throw new Error('Database error while verifying administrator.');
+        }
+
+        if (!data) {
+            // Sign out immediately if not an admin
+            await supabaseClient.auth.signOut();
+            const err = new Error('Administrator record not found.');
+            err.code = 'NOT_ADMIN';
+            throw err;
+        }
+
+        // Check account status
+        if (data.account_status && data.account_status !== 'Active') {
+            await supabaseClient.auth.signOut();
+            const err = new Error(`Account is ${data.account_status}.`);
+            err.code = 'ACCOUNT_INACTIVE';
+            throw err;
+        }
+
+        // Check login enabled
+        if (data.login_enabled === false) {
+            await supabaseClient.auth.signOut();
+            const err = new Error('Login is disabled for this account.');
+            err.code = 'LOGIN_DISABLED';
+            throw err;
+        }
+
+        // Check if deleted
+        if (data.deleted_at !== null && data.deleted_at !== undefined) {
+            await supabaseClient.auth.signOut();
+            const err = new Error('This account has been deleted.');
+            err.code = 'ACCOUNT_DELETED';
+            throw err;
+        }
+
+        // Check role (case-insensitive)
+        const role = data.role ? data.role.toLowerCase() : '';
+        if (role !== 'administrator' && role !== 'admin') {
+            await supabaseClient.auth.signOut();
+            const err = new Error('Insufficient privileges. Administrator role required.');
+            err.code = 'INSUFFICIENT_ROLE';
+            throw err;
+        }
+
+        return data;
+    }
+
+    /**
+     * Load and store safe administrator profile data in session storage
+     * @param {Object} adminRecord 
+     * @returns {Object} Safe profile object
+     */
+    function loadAdministrator(adminRecord) {
+        const safeProfile = {
+            id: adminRecord.id,
+            admin_id: adminRecord.admin_id,
+            full_name: adminRecord.full_name,
+            role: adminRecord.role,
+            email: adminRecord.email,
+            logged_in_at: new Date().toISOString()
+        };
+
+        sessionStorage.setItem('al_arabi_admin_profile', JSON.stringify(safeProfile));
+        currentAdmin = safeProfile;
+        return safeProfile;
+    }
+
+    /**
+     * Clear local session data
+     */
+    function clearLocalSession() {
+        sessionStorage.removeItem('al_arabi_admin_profile');
+        currentAdmin = null;
+        resetIdleTimer();
+    }
+
+    /**
+     * Logout administrator and clear all sessions
+     * @param {string} message - Optional message to show on login page
+     */
+    async function logoutAdministrator(message = null) {
+        if (supabaseClient) {
+            await supabaseClient.auth.signOut();
+        }
+        clearLocalSession();
+        if (message) {
+            showInlineError(message);
+        }
+        redirectToLogin();
+    }
+
+    // ==========================================
+    // 6. SESSION MANAGEMENT & ROUTE PROTECTION
+    // ==========================================
+
+    /**
+     * Check current session validity
+     * @returns {Promise<boolean>}
+     */
+    async function checkSession() {
+        if (!supabaseClient) return false;
+
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        
+        if (error || !session) {
+            return false;
+        }
+
+        // Verify admin record still exists and is active
+        try {
+            const adminRecord = await verifyAdministrator(session.user.id);
+            loadAdministrator(adminRecord);
+            return true;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    /**
+     * Restore session on page load
+     */
+    async function restoreSession() {
+        const isValid = await checkSession();
+        if (isValid) {
+            // Already logged in, redirect to dashboard
+            window.location.href = CONFIG.DASHBOARD_URL;
+        }
+    }
+
+    /**
+     * Protect route (ensures authenticated users are redirected to dashboard)
+     */
+    function protectRoute() {
+        restoreSession();
+    }
+
+    /**
+     * Refresh session explicitly
+     * @returns {Promise<boolean>}
+     */
+    async function refreshSession() {
+        if (!supabaseClient) return false;
+        const { data, error } = await supabaseClient.auth.refreshSession();
+        return !error && data.session;
+    }
+
+    /**
+     * Redirect to login page
+     */
+    function redirectToLogin() {
+        const currentPath = window.location.pathname;
+        if (currentPath.endsWith('login.html') || currentPath === '/' || currentPath.endsWith('index.html')) {
+            return; // Already on login page
+        }
+        window.location.href = CONFIG.LOGIN_URL;
+    }
+
+    // ==========================================
+    // 7. ERROR MAPPING & HANDLING
+    // ==========================================
+
+    /**
+     * Map Supabase errors to user-friendly messages
+     * @param {Error} error 
+     * @returns {Error}
+     */
+    function mapSupabaseError(error) {
+        const msg = error.message.toLowerCase();
+        
+        if (msg.includes('invalid login credentials') || msg.includes('email not confirmed')) {
+            const err = new Error('Invalid Administrator Credentials.');
+            err.code = 'INVALID_CREDENTIALS';
+            return err;
+        }
+        if (msg.includes('too many') || msg.includes('rate limit')) {
+            const err = new Error('Too many login attempts. Please try again later.');
+            err.code = 'RATE_LIMIT';
+            return err;
+        }
+        if (msg.includes('network') || msg.includes('fetch')) {
+            const err = new Error('Network error. Please check your connection.');
+            err.code = 'NETWORK_ERROR';
+            return err;
+        }
+        
+        const err = new Error(error.message || 'An unknown authentication error occurred.');
+        err.code = 'UNKNOWN_ERROR';
+        return err;
+    }
+
+    /**
+     * Handle and display authentication errors
+     * @param {Error} err 
+     */
+    function handleAuthError(err) {
+        console.error('[Auth] Error:', err);
+        let title = 'Access Denied';
+        let message = 'Authentication Failed.';
+
+        switch (err.code) {
+            case 'INVALID_CREDENTIALS':
+                message = 'Invalid Administrator Credentials.';
+                break;
+            case 'NOT_ADMIN':
+                title = 'Unauthorized Access';
+                message = 'You are not registered as an Administrator.';
+                break;
+            case 'ACCOUNT_INACTIVE':
+                title = 'Account Disabled';
+                message = err.message;
+                break;
+            case 'LOGIN_DISABLED':
+                title = 'Login Disabled';
+                message = 'Administrator login is currently disabled.';
+                break;
+            case 'ACCOUNT_DELETED':
+                title = 'Account Deleted';
+                message = 'This account no longer exists.';
+                break;
+            case 'INSUFFICIENT_ROLE':
+                title = 'Insufficient Privileges';
+                message = err.message;
+                break;
+            case 'RATE_LIMIT':
+                title = 'Rate Limit Exceeded';
+                message = err.message;
+                break;
+            case 'NETWORK_ERROR':
+                title = 'Connection Failed';
+                message = err.message;
+                break;
+            default:
+                message = err.message || 'An unexpected error occurred.';
+        }
+
+        showError(title, message);
+    }
+
+    // ==========================================
+    // 8. IDLE TIMEOUT & SECURITY LISTENERS
+    // ==========================================
+
+    function resetIdleTimer() {
+        if (idleTimer) clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+            if (currentAdmin) {
+                logoutAdministrator('Session expired due to inactivity.');
+            }
+        }, CONFIG.IDLE_TIMEOUT);
+    }
+
+    function setupActivityListeners() {
+        const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+        events.forEach(event => {
+            document.addEventListener(event, () => {
+                if (currentAdmin) resetIdleTimer();
+            }, { passive: true });
+        });
+    }
+
+    // ===============================================
+
+    // ==========================================
+    // 9. EVENT HANDLERS & INITIALIZATION
+    // ==========================================
+
+    function setupEventListeners() {
+        // Form Submit
+        dom.loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            dom.errorMsg.classList.remove('show');
+
+            const rawAdminId = dom.adminIdInput.value;
+            const rawPassword = dom.passwordInput.value;
+
+            // Sanitize and validate
+            const adminId = sanitizeInput(rawAdminId);
+            const validation = validateInputs(adminId, rawPassword);
+            
+            if (!validation.valid) {
+                showInlineError(validation.message);
+                return;
+            }
+
+            // Map short ID to email if necessary
+            const email = adminId.includes('@') ? adminId : `${adminId}${CONFIG.DEFAULT_EMAIL_DOMAIN}`;
+
+            disableLoginButton();
+
+            // Remember Me
+            if (dom.rememberMe.checked) {
+                localStorage.setItem('al_arabi_remember_id', adminId);
+            } else {
+                localStorage.removeItem('al_arabi_remember_id');
+            }
+
+            // Create the auth promise
+            const authPromise = (async () => {
+                // 1. Login
+                const user = await loginAdministrator(email, rawPassword);
+                
+                // 2. Verify Admin Record
+                const adminRecord = await verifyAdministrator(user.id);
+                
+                // 3. Load Profile
+                loadAdministrator(adminRecord);
+                
+                return true;
+            })();
+
+            try {
+                await runVerificationSequence(authPromise);
+                showSuccess();
+            } catch (err) {
+                handleAuthError(err);
+            }
+        });
+
+        // Password Toggle
+        dom.togglePass.addEventListener('click', () => {
+            const isPassword = dom.passwordInput.type === 'password';
+            dom.passwordInput.type = isPassword ? 'text' : 'password';
+            dom.togglePass.querySelector('i').className = isPassword ? 'fas fa-eye-slash' : 'fas fa-eye';
+        });
+
+        // Retry Button
+        dom.retryBtn.addEventListener('click', () => {
+            dom.errorOverlay.classList.remove('show');
+            dom.passwordInput.value = '';
+            dom.passwordInput.focus();
+        });
+
+        // Ripple Effect on Login Button
+        dom.loginBtn.addEventListener('click', (e) => {
+            if (dom.loginBtn.disabled) return;
+            const rect = dom.loginBtn.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            const size = Math.max(rect.width, rect.height);
+            ripple.className = 'ripple';
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            dom.loginBtn.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 700);
+        });
+    }
+
+    /**
+     * Main initialization function
+     */
+    function init() {
+        // 1. Initialize Supabase
+        if (!initializeSupabase()) {
+            showInlineError('Secure connection unavailable. Please refresh the page.');
+            return;
+        }
+
+        // 2. Setup UI Listeners
+        setupEventListeners();
+        setupActivityListeners();
+
+        // 3. Remember Me Restore
+        const savedId = localStorage.getItem('al_arabi_remember_id');
+        if (savedId) {
+            dom.adminIdInput.value = savedId;
+            dom.rememberMe.checked = true;
+        }
+
+        // 4. Protect Route / Restore Session
+        protectRoute();
+        
+        // 5. Start Idle Timer if session exists
+        if (currentAdmin) {
+            resetIdleTimer();
+        }
+    }
+
+    // Start the application when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+})();
+</script>
+</body>
+</html>

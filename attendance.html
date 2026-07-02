@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AL-ARABI EMS | Attendance Management</title>
+<link rel="icon" href="logo.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --emerald-950: #022c22;
+  --emerald-900: #064e3b;
+  --emerald-800: #065f46;
+  --emerald-700: #047857;
+  --emerald-500: #10b981;
+  --emerald-400: #34d399;
+  --gold-600: #b8860b;
+  --gold-500: #d4a574;
+  --gold-400: #e6c89b;
+  --ivory: #fefaf3;
+  --cream: #f5efe3;
+  --white: #ffffff;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a68;
+  --text-muted: #7a7a94;
+  --danger: #dc2626;
+  --warning: #f59e0b;
+  --success: #10b981;
+  --shadow-sm: 0 2px 8px rgba(6, 78, 59, 0.06);
+  --shadow-md: 0 8px 24px rgba(6, 78, 59, 0.10);
+  --shadow-lg: 0 20px 50px rgba(6, 78, 59, 0.15);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--ivory);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 260px;
+  background: linear-gradient(180deg, var(--emerald-950) 0%, var(--emerald-900) 100%);
+  color: var(--ivory);
+  z-index: 1000;
+  overflow-y: auto;
+  transition: var(--transition);
+}
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  text-align: center;
+}
+.sidebar-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold-400);
+}
+.sidebar-header .version {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.6);
+  margin-top: 4px;
+}
+.sidebar-nav { padding: 16px 0; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.nav-item:hover, .nav-item.active {
+  background: rgba(255,255,255,0.08);
+  color: var(--ivory);
+  border-left: 3px solid var(--gold-500);
+}
+.nav-item i { width: 20px; text-align: center; }
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.7rem;
+  text-align: center;
+  color: rgba(255,255,255,0.5);
+}
+
+/* Main Content */
+.main {
+  margin-left: 260px;
+  min-height: 100vh;
+  transition: var(--transition);
+}
+
+/* Topbar */
+.topbar {
+  background: var(--white);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.page-title h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--emerald-900);
+}
+.page-title p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+.topbar-right { display: flex; align-items: center; gap: 16px; }
+.date-box {
+  background: var(--ivory);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  text-align: right;
+}
+.date-box .date { font-size: 0.75rem; color: var(--text-muted); }
+.date-box .time { font-size: 0.95rem; font-weight: 700; color: var(--emerald-700); font-family: monospace; }
+
+/* Page Content */
+.page-content { padding: 24px; }
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--white);
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: var(--transition);
+  border: 1px solid rgba(6,78,59,0.05);
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.stat-icon {
+  width: 52px; height: 52px;
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 1.3rem;
+  flex-shrink: 0;
+}
+.stat-icon.total { background: linear-gradient(135deg, var(--emerald-500), var(--emerald-700)); }
+.stat-icon.present { background: linear-gradient(135deg, var(--success), #059669); }
+.stat-icon.absent { background: linear-gradient(135deg, var(--danger), #b91c1c); }
+.stat-icon.late { background: linear-gradient(135deg, var(--warning), #d97706); }
+.stat-info .value {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+.stat-info .label {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Content Card */
+.card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(6,78,59,0.05);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(6,78,59,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.card-header h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--emerald-900);
+}
+.card-body { padding: 24px; }
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.filter-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: var(--ivory);
+  color: var(--text-secondary);
+  border: 1px solid rgba(6,78,59,0.1);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.filter-btn:hover, .filter-btn.active {
+  background: var(--emerald-700);
+  color: var(--ivory);
+  border-color: var(--emerald-700);
+}
+
+/* Attendance Table */
+.table-scroll { overflow-x: auto; }
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.attendance-table th {
+  background: var(--ivory);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid rgba(6,78,59,0.1);
+}
+.attendance-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(6,78,59,0.05);
+  vertical-align: middle;
+}
+.attendance-table tbody tr:hover { background: rgba(16,185,129,0.03); }
+.student-info { display: flex; align-items: center; gap: 12px; }
+.student-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--emerald-500), var(--gold-500));
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.student-name { font-weight: 600; color: var(--text-primary); }
+.student-reg { font-size: 0.78rem; color: var(--text-muted); }
+
+/* Attendance Buttons */
+.attendance-actions { display: flex; gap: 8px; }
+.att-btn {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+  border: 2px solid rgba(6,78,59,0.15);
+  background: var(--white);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.att-btn:hover { transform: scale(1.1); }
+.att-btn.present.active {
+  background: var(--success);
+  border-color: var(--success);
+  color: white;
+}
+.att-btn.absent.active {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: white;
+}
+.att-btn.late.active {
+  background: var(--warning);
+  border-color: var(--warning);
+  color: white;
+}
+
+/* Action Buttons */
+.btn {
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--emerald-700), var(--emerald-900));
+  color: var(--ivory);
+  box-shadow: var(--shadow-sm);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.btn-success {
+  background: linear-gradient(135deg, var(--success), #059669);
+  color: white;
+}
+.btn-success:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.btn-outline {
+  background: var(--white);
+  color: var(--emerald-700);
+  border: 1px solid var(--emerald-700);
+}
+.btn-outline:hover { background: var(--emerald-50); }
+
+/* Chart Container */
+.chart-container {
+  position: relative;
+  height: 280px;
+  margin-top: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.active { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .menu-toggle { display: block; }
+  .page-content { padding: 16px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+  <!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h1><i class="fas fa-mosque"></i> AL-ARABI EMS</h1>
+    <div class="version">VERSION 36.6 • ATTENDANCE</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dashboard</a>
+    <a href="dashboard.html#students" class="nav-item"><i class="fas fa-user-graduate"></i> Students</a>
+    <a href="attendance.html" class="nav-item active"><i class="fas fa-clipboard-check"></i> Attendance</a>
+    <a href="CBT.html" class="nav-item"><i class="fas fa-laptop-code"></i> CBT Exams</a>
+    <a href="dashboard.html#reports" class="nav-item"><i class="fas fa-chart-bar"></i> Reports</a>
+    <a href="dashboard.html#settings" class="nav-item"><i class="fas fa-cog"></i> Settings</a>
+    <a href="index.html" class="nav-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </nav>
+  <div class="sidebar-footer">© 2026 AL-ARABI EDUCATION SYSTEM</div>
+</aside>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+      <div class="page-title">
+        <h2>Attendance Management</h2>
+        <p>Track daily student attendance and generate reports</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="date-box">
+        <div class="date" id="current-date">Loading Date...</div>
+        <div class="time" id="current-time">00:00:00</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE CONTENT -->
+  <div class="page-content">
+    
+    <!-- STATS GRID -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon total"><i class="fas fa-users"></i></div>
+        <div class="stat-info">
+          <div class="value" id="stat-total">0</div>
+          <div class="label">Total Students</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon present"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info">
+          <div class="value" id="stat-present">0</div>
+          <div class="label">Present Today</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon absent"><i class="fas fa-times-circle"></i></div>
+        <div class="stat-info">
+          <div class="value" id="stat-absent">0</div>
+          <div class="label">Absent Today</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon late"><i class="fas fa-clock"></i></div>
+        <div class="stat-info">
+          <div class="value" id="stat-late">0</div>
+          <div class="label">Late Today</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ATTENDANCE TABLE CARD -->
+    <div class="card">
+      <div class="card-header">
+        <h3><i class="fas fa-clipboard-list"></i> Mark Daily Attendance</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="date" id="attendance-date" class="form-control" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+          <button class="btn btn-success" id="save-btn" onclick="saveAttendanceToSupabase()">
+            <i class="fas fa-save"></i> Save Attendance
+          </button>
+        </div>
+      </div>
+      <div class="card-body" style="padding: 0;">
+        <div style="padding: 16px 24px; border-bottom: 1px solid rgba(6,78,59,0.08);">
+          <div class="filters">
+            <button class="filter-btn active" data-filter="all">All Students</button>
+            <button class="filter-btn" data-filter="present">Present</button>
+            <button class="filter-btn" data-filter="absent">Absent</button>
+            <button class="filter-btn" data-filter="late">Late</button>
+            <button class="filter-btn" data-filter="unmarked">Unmarked</button>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="attendance-table">
+            <thead>
+              <tr>
+                <th>Student Information</th>
+                <th>Reg. ID</th>
+                <th>Programme</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="attendance-table-body">
+              <!-- Populated by JavaScript from Supabase -->
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                  <i class="fas fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 10px; display: block;"></i>
+                  Fetching students from database...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS CARD -->
+    <div class="card">
+      <div class="card-header">
+        <h3><i class="fas fa-chart-line"></i> Monthly Attendance Overview</h3>
+      </div>
+      <div class="card-body">
+        <div class="chart-container">
+          <canvas id="attendanceChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+<script>
+// ==========================================
+// 1. SUPABASE CONFIGURATION (LIVE DATABASE)
+// ==========================================
+// IMPORTANT: Replace these with your actual Supabase Project URL and Anon Key
+const SUPABASE_URL = 'https://qqqxxbixuzdihfnmutpp.supabase.co'; 
+const SUPABASE_ANON_KEY = 'sb_publishable_oAqdfpvMyYEdeMzZuIb57w_muvQROpY';
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ==========================================
+// 2. LIVE CLOCK & DATE
+// ==========================================
+function updateClock() {
+  const now = new Date();
+  const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('current-date').innerText = now.toLocaleDateString('en-US', dateOptions);
+  document.getElementById('current-time').innerText = now.toLocaleTimeString();
+  
+  // Set today's date in the date picker if not already set
+  const dateInput = document.getElementById('attendance-date');
+  if (!dateInput.value) {
+    dateInput.value = now.toISOString().split('T')[0];
+  }
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ==========================================
+// 3. GLOBAL STATE
+// ==========================================
+let allStudents = [];
+let attendanceState = {}; // Stores { student_id: 'present' | 'absent' | 'late' }
+
+// ==========================================
+// 4. FETCH STUDENTS FROM SUPABASE
+// ==========================================
+async function loadStudents() {
+  const tbody = document.getElementById('attendance-table-body');
+  
+  try {
+    const { data, error } = await supabaseClient
+      .from('students')
+      .select('*')
+      .order('created_at', { ascending: false }); 
+      
+    if (error) throw error;
+    
+    allStudents = data || [];
+    document.getElementById('stat-total').innerText = allStudents.length;
+    
+    // Initialize attendance state as 'unmarked'
+    allStudents.forEach(s => {
+      attendanceState[s.id] = 'unmarked';
+    });
+    
+    renderAttendanceTable(allStudents);
+    loadExistingAttendance(); // Check if attendance already exists for today
+    
+  } catch (err) {
+    console.error('Supabase Error:', err);
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">
+      Error fetching data. Check Supabase URL/Key.<br><small>${err.message}</small>
+    </td></tr>`;
+  }
+}
+
+// ==========================================
+// 5. RENDER ATTENDANCE TABLE
+// ==========================================
+function renderAttendanceTable(students) {
+  const tbody = document.getElementById('attendance-table-body');
+  tbody.innerHTML = '';
+  
+  if (students.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px;">No students found.</td></tr>';
+    return;
+  }
+  
+  students.forEach(s => {
+    const name = s.full_name || s.name || 'N/A';
+    const regId = s.reg_id || s.id || 'N/A';
+    const programme = s.programme || 'N/A';
+    const status = attendanceState[s.id] || 'unmarked';
+    const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    
+    const tr = document.createElement('tr');
+    tr.setAttribute('data-status', status);
+    tr.innerHTML = `
+      <td>
+        <div class="student-info">
+          <div class="student-avatar">${initials}</div>
+          <div>
+            <div class="student-name">${name}</div>
+          </div>
+        </div>
+      </td>
+      <td>${regId}</td>
+      <td><span style="background: var(--ivory); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; color: var(--emerald-700);">${programme}</span></td>
+      <td>
+        <span class="badge-status" style="color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: capitalize;">${status}</span>
+      </td>
+      <td>
+        <div class="attendance-actions">
+          <button class="att-btn present ${status === 'present' ? 'active' : ''}" onclick="markAttendance('${s.id}', 'present', this)" title="Present"><i class="fas fa-check"></i></button>
+          <button class="att-btn absent ${status === 'absent' ? 'active' : ''}" onclick="markAttendance('${s.id}', 'absent', this)" title="Absent"><i class="fas fa-times"></i></button>
+          <button class="att-btn late ${status === 'late' ? 'active' : ''}" onclick="markAttendance('${s.id}', 'late', this)" title="Late"><i class="fas fa-clock"></i></button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+  
+  updateStats();
+}
+
+// ==========================================
+// 6. MARK ATTENDANCE (UI UPDATE)
+// ==========================================
+function markAttendance(studentId, status, btnElement) {
+  attendanceState[studentId] = status;
+  
+  // Update UI buttons in the same row
+  const row = btnElement.closest('tr');
+  row.querySelectorAll('.att-btn').forEach(btn => btn.classList.remove('active'));
+  btnElement.classList.add('active');
+  
+  // Update status text
+  const statusText = row.querySelector('.badge-status');
+  statusText.innerText = status;
+  statusText.style.color = status === 'present' ? 'var(--success)' : status === 'absent' ? 'var(--danger)' : status === 'late' ? 'var(--warning)' : 'var(--text-muted)';
+  
+  // Update row data attribute for filtering
+  row.setAttribute('data-status', status);
+  
+  updateStats();
+  applyFilters(); // Re-apply current filter if active
+}
+
+// ==========================================
+// 7. UPDATE STATS COUNTERS
+// ==========================================
+function updateStats() {
+  const values = Object.values(attendanceState);
+  document.getElementById('stat-present').innerText = values.filter(v => v === 'present').length;
+  document.getElementById('stat-absent').innerText = values.filter(v => v === 'absent').length;
+  document.getElementById('stat-late').innerText = values.filter(v => v === 'late').length;
+}
+
+// ==========================================
+// 8. FILTER LOGIC
+// ==========================================
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    applyFilters();
+  });
+});
+
+function applyFilters() {
+  const filter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+  const rows = document.querySelectorAll('#attendance-table-body tr');
+  
+  rows.forEach(row => {
+    const status = row.getAttribute('data-status');
+    if (filter === 'all' || status === filter) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+// ==========================================
+// 9. SAVE ATTENDANCE TO SUPABASE
+// ==========================================
+async function saveAttendanceToSupabase() {
+  const date = document.getElementById('attendance-date').value;
+  if (!date) return alert('Please select a date first.');
+
+  // Prepare records to save (only save marked ones)
+  const records = Object.keys(attendanceState)
+    .filter(id => attendanceState[id] !== 'unmarked')
+    .map(studentId => ({
+      date: date,
+      student_id: studentId,
+      status: attendanceState[studentId]
+    }));
+
+  if (records.length === 0) return alert('No attendance marked yet!');
+
+  const btn = document.getElementById('save-btn');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+  btn.disabled = true;
+
+  try {
+    // Note: For this to work perfectly, your Supabase 'attendance' table 
+    // should have a unique constraint on (date, student_id) to allow upsert.
+    // If not, change .upsert() to .insert() below.
+    const { data, error } = await supabaseClient
+      .from('attendance')
+      .upsert(records, { onConflict: 'date,student_id' }); 
+
+    if (error) throw error;
+    alert('✅ Attendance saved successfully for ' + date + '!');
+  } catch (err) {
+    console.error('Save Error:', err);
+    alert('❌ Error saving: ' + err.message);
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
+// ==========================================
+// 10. LOAD EXISTING ATTENDANCE FOR SELECTED DATE
+// ==========================================
+async function loadExistingAttendance() {
+  const date = document.getElementById('attendance-date').value;
+  if (!date || allStudents.length === 0) return;
+
+  const studentIds = allStudents.map(s => s.id);
+
+  const { data, error } = await supabaseClient
+    .from('attendance')
+    .select('*')
+    .in('student_id', studentIds)
+    .eq('date', date);
+
+  if (!error && data) {
+    data.forEach(record => {
+      attendanceState[record.student_id] = record.status;
+    });
+    renderAttendanceTable(allStudents);
+  }
+}
+
+// Reload attendance when date changes
+document.getElementById('attendance-date').addEventListener('change', () => {
+  // Reset to unmarked first
+  allStudents.forEach(s => attendanceState[s.id] = 'unmarked');
+  loadExistingAttendance();
+});
+
+// ==========================================
+// 11. RENDER CHART (Chart.js)
+// ==========================================
+function renderAttendanceChart() {
+  const ctx = document.getElementById('attendanceChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      datasets: [
+        { label: 'Present', data: [120, 125, 118, 130], backgroundColor: '#10b981' },
+        { label: 'Absent', data: [20, 15, 22, 10], backgroundColor: '#dc2626' },
+        { label: 'Late', data: [10, 10, 10, 10], backgroundColor: '#f59e0b' }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' } },
+      scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+    }
+  });
+}
+
+// ==========================================
+// 12. MOBILE MENU TOGGLE
+// ==========================================
+document.getElementById('menuToggle').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('active');
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', (e) => {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('menuToggle');
+  if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
+    sidebar.classList.remove('active');
+  }
+});
+
+// ==========================================
+// 13. INITIALIZATION
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
+  loadStudents();
+  renderAttendanceChart();
+});
+</script>
+</body>
+</html>

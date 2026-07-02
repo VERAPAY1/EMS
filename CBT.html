@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AL-ARABI EMS | CBT Examination Portal</title>
+<link rel="icon" href="logo.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --primary: #0f172a;
+  --accent: #059669;
+  --danger: #dc2626;
+  --warning: #f59e0b;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --radius: 12px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+.topbar {
+  background: var(--surface);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-brand { display: flex; align-items: center; gap: 12px; }
+.topbar-logo {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), var(--primary));
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 1.2rem;
+}
+.topbar-title h1 { font-size: 1.1rem; font-weight: 800; color: var(--primary); }
+.topbar-title p { font-size: 0.7rem; color: var(--text-muted); }
+.user-badge {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 12px;
+  background: var(--bg);
+  border-radius: 30px;
+}
+.user-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--accent); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+.main-container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+.page-header { margin-bottom: 32px; text-align: center; }
+.page-header h2 { font-size: 2rem; font-weight: 900; color: var(--primary); margin-bottom: 8px; }
+.page-header p { color: var(--text-muted); }
+.loading { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+.loading i { font-size: 3rem; margin-bottom: 16px; opacity: 0.3; }
+/* Active Exam Layout */
+.exam-active-container {
+  display: flex;
+  height: calc(100vh - 73px);
+  overflow: hidden;
+}
+
+/* Question Navigator */
+.question-nav {
+  width: 280px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.nav-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+.nav-header h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+.nav-header p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+.nav-btn {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.nav-btn.current {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+.nav-btn.answered {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.nav-btn.marked {
+  background: var(--warning);
+  color: white;
+  border-color: var(--warning);
+  position: relative;
+}
+.nav-btn.marked::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  background: var(--danger);
+  border-radius: 50%;
+}
+.nav-footer {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+}
+.btn-submit-exam {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--danger);
+  color: white;
+  font-weight: 700;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+.btn-submit-exam:hover {
+  background: #b91c1c;
+}
+
+/* Main Question Area */
+.question-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: var(--bg);
+}
+.question-header {
+  background: var(--surface);
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.question-progress {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.question-progress span {
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+/* Live Timer */
+.exam-timer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--primary);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.exam-timer.warning {
+  background: var(--warning);
+  color: var(--primary);
+}
+.exam-timer.danger {
+  background: var(--danger);
+}
+
+/* Question Card */
+.question-content {
+  padding: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  flex: 1;
+}
+.question-card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 32px;
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+.question-text {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--primary);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.option-card {
+  padding: 16px 20px;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.option-card:hover {
+  border-color: var(--accent);
+}
+.option-card.selected {
+  border-color: var(--accent);
+  background: rgba(5, 150, 105, 0.08);
+}
+.option-letter {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+.option-card.selected .option-letter {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+.option-text {
+  font-size: 1rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Question Actions */
+.question-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+}
+.btn-nav {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-prev {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-next {
+  background: var(--accent);
+  color: white;
+}
+.btn-mark {
+  background: var(--warning);
+  color: white;
+}
+
+/* Lockdown Overlay */
+.lockdown-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.95);
+  z-index: 9999;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding: 24px;
+}
+.lockdown-overlay.active {
+  display: flex;
+}
+.lockdown-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(220, 38, 38, 0.2);
+  border: 3px solid var(--danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--danger);
+  margin-bottom: 24px;
+}
+.lockdown-title {
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 12px;
+  color: var(--danger);
+}
+.lockdown-text {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.8);
+  max-width: 500px;
+  line-height: 1.6;
+}
+.lockdown-warning {
+  margin-top: 24px;
+  font-size: 0.9rem;
+  color: var(--warning);
+  font-weight: 600;
+}
+
+/* Result Screen */
+.result-container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.result-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(5, 150, 105, 0.1);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  margin: 0 auto 20px;
+}
+.result-score-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 24px 0;
+}
+.score-item {
+  background: var(--bg);
+  padding: 16px;
+  border-radius: 10px;
+}
+.score-item .label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.score-item .value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .exam-active-container {
+    flex-direction: column;
+    height: auto;
+  }
+  .question-nav {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-grid {
+    grid-template-columns: repeat(8, 1fr);
+  }
+  .question-content {
+    padding: 16px;
+  }
+  .question-card {
+    padding: 20px;
+  }
+  .question-header {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo"><i class="fas fa-laptop-code"></i></div>
+    <div class="topbar-title">
+      <h1>AL-ARABI CBT</h1>
+      <p>SECURE EXAMINATION PORTAL</p>
+    </div>
+  </div>
+  <div class="user-badge">
+    <div style="text-align: right;">
+      <div style="font-size: 0.85rem; font-weight: 600;">Student</div>
+      <div style="font-size: 0.7rem; color: var(--text-muted);">Reg ID</div>
+    </div>
+    <div class="user-avatar">S</div>
+  </div>
+</header>
+
+<main class="main-container" id="exam-lobby">
+  <div class="page-header">
+    <h2>Available Examinations</h2>
+    <p>Select an examination to begin.</p>
+  </div>
+  <div id="exam-list" class="loading">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Loading available examinations...</p>
+  </div>
+</main>
+
+<!-- ACTIVE EXAM -->
+<div class="exam-active-container" id="exam-active" style="display:none;">
+  <aside class="question-nav">
+    <div class="nav-header">
+      <h3>Question Navigator</h3>
+      <p id="nav-progress">0 of 0 Answered</p>
+    </div>
+    <div class="nav-grid" id="nav-grid"></div>
+    <div class="nav-footer">
+      <button class="btn-submit-exam" onclick="openSubmitModal()">
+        <i class="fas fa-paper-plane"></i> Submit Examination
+      </button>
+    </div>
+  </aside>
+  <main class="question-area">
+    <div class="question-header">
+      <div class="question-progress">
+        Question <span id="current-q-num">1</span>
+        of <span id="total-q-num">0</span>
+      </div>
+      <div class="exam-timer" id="exam-timer">
+        <i class="fas fa-clock"></i>
+        <span id="timer-display">00:00:00</span>
+      </div>
+    </div>
+    <div class="question-content">
+      <div class="question-card">
+        <div class="question-text" id="question-text">
+          Loading question...
+        </div>
+        <div class="options-list" id="options-list"></div>
+      </div>
+      <div class="question-actions">
+        <button class="btn-nav btn-prev" onclick="prevQuestion()">
+          <i class="fas fa-chevron-left"></i> Previous
+        </button>
+        <button class="btn-nav btn-mark" onclick="markForReview()">
+          <i class="fas fa-flag"></i> Mark
+        </button>
+        <button class="btn-nav btn-next" onclick="nextQuestion()">
+          Next <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- RESULT SCREEN -->
+<div id="exam-result" style="display:none;">
+  <div class="result-container">
+    <div class="result-icon">
+      <i class="fas fa-check-circle"></i>
+    </div>
+    <h2 id="result-title" style="font-size:1.5rem;font-weight:800;margin-bottom:8px;">
+      Examination Completed!
+    </h2>
+    <p id="result-subtitle" style="color:var(--text-muted);margin-bottom:24px;">
+      Here is your performance summary.
+    </p>
+    <div class="result-score-box">
+      <div class="score-item">
+        <div class="label">Your Score</div>
+        <div class="value" id="result-score">0/0</div>
+      </div>
+      <div class="score-item">
+        <div class="label">Percentage</div>
+        <div class="value" id="result-percent">0%</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <button class="btn-nav btn-prev" style="flex:1;justify-content:center;" onclick="printResultPDF()">
+        <i class="fas fa-file-pdf"></i> Print Result
+      </button>
+      <button class="btn-nav btn-next" style="flex:1;justify-content:center;" onclick="returnToLobby()">
+        <i class="fas fa-home"></i> Return to Lobby
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- LOCKDOWN OVERLAY -->
+<div class="lockdown-overlay" id="lockdown-overlay">
+  <div class="lockdown-icon">
+    <i class="fas fa-exclamation-triangle"></i>
+  </div>
+  <h2 class="lockdown-title">Warning: Tab Switch Detected!</h2>
+  <p class="lockdown-text">
+    You have attempted to leave the examination window.
+    This is a strict violation of examination rules.
+  </p>
+  <p class="lockdown-warning" id="lockdown-warning">
+    Warning 1 of 3.
+  </p>
+  <button class="btn-nav btn-next" style="margin-top:32px;padding:14px 32px;" onclick="resumeExam()">
+    <i class="fas fa-undo"></i> Return to Exam
+  </button>
+</div>
+
+<!-- SUBMIT MODAL -->
+<div id="submit-modal" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:5000;">
+  <div style="background:white;border-radius:16px;padding:32px;max-width:400px;width:90%;text-align:center;">
+    <div style="width:60px;height:60px;border-radius:50%;background:rgba(220,38,38,0.1);color:var(--danger);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 16px;">
+      <i class="fas fa-paper-plane"></i>
+    </div>
+    <h3 style="font-size:1.2rem;font-weight:800;margin-bottom:8px;">
+      Submit Examination?
+    </h3>
+    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:24px;" id="submit-summary">
+      You have answered 0 out of 0 questions.
+    </p>
+    <div style="display:flex;gap:12px;">
+      <button class="btn-nav btn-prev" style="flex:1;justify-content:center;" onclick="closeSubmitModal()">
+        Cancel
+      </button>
+      <button class="btn-nav btn-next" style="flex:1;justify-content:center;background:var(--danger);" onclick="submitExam()">
+        Yes, Submit
+      </button>
+    </div>
+  </div>
+</div>
+  </div>
+  <div id="exam-list" class="loading">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Loading available examinations...</p>
+  </div>
+</main>
+
+<script>
+// SUPABASE CONFIG - REPLACE WITH YOUR KEYS
+const SUPABASE_URL = 'https://qqqxxbixuzdihfnmutpp.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_oAqdfpvMyYEdeMzZuIb57w_muvQROpY';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// LOAD EXAMS
+async function loadExams() {
+  const container = document.getElementById('exam-list');
+  try {
+    const { data, error } = await supabase
+      .from('cbt_exams')
+      .select('*')
+      .in('status', ['published', 'running'])
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    
+    if (!data || data.length === 0) {
+      container.innerHTML = '<p>No examinations available at this time.</p>';
+      return;
+    }
+    
+    container.innerHTML = '<p>Found ' + data.length + ' examination(s). Feature under development.</p>';
+    console.log('Exams loaded:', data);
+  } catch (err) {
+    console.error('Error:', err);
+    container.innerHTML = '<p style="color: var(--danger);">Error loading exams. Check console.</p>';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadExams);
+</script>
+<script>
+// SUPABASE CONFIG
+const SUPABASE_URL = 'https://qqqxxbixuzdihfnmutpp.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_oAqdfpvMyYEdeMzZuIb57w_muvQROpY';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// GLOBAL STATE
+let currentExam = null;
+let questions = [];
+let answers = {};
+let marked = new Set();
+let currentIndex = 0;
+let timerInt = null;
+let timeLeft = 0;
+let violations = 0;
+let attemptId = null;
+let isLocked = false;
+
+// INIT
+document.addEventListener('DOMContentLoaded', () => {
+  loadExams();
+});
+
+// LOAD EXAMS
+async function loadExams() {
+  const box = document.getElementById('exam-list');
+  try {
+    const { data, error } = await sb
+      .from('cbt_exams')
+      .select('*')
+      .in('status', ['published', 'running'])
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      box.innerHTML = '<p>No exams available.</p>';
+      return;
+    }
+
+    let html = '';
+    data.forEach(ex => {
+      const start = new Date(ex.start_time);
+      const end = new Date(ex.end_time);
+      const now = new Date();
+      let status = 'status-open';
+      let btnText = 'Start Exam';
+      let disabled = '';
+
+      if (now < start) {
+        status = 'status-scheduled';
+        btnText = 'Scheduled';
+        disabled = 'disabled';
+      } else if (now > end) {
+        status = 'status-closed';
+        btnText = 'Closed';
+        disabled = 'disabled';
+      }
+
+      html += '<div class="exam-card">';
+      html += '<div class="exam-header">';
+      html += '<span class="exam-subject">' + (ex.subject || 'General') + '</span>';
+      html += '<span class="exam-status ' + status + '">' + btnText + '</span>';
+      html += '</div>';
+      html += '<h3 class="exam-title">' + ex.title + '</h3>';
+      html += '<p class="exam-desc">' + (ex.description || '') + '</p>';
+      html += '<div class="exam-meta">';
+      html += '<span><i class="fas fa-clock"></i> ' + ex.duration_mins + 'm</span>';
+      html += '<span><i class="fas fa-star"></i> ' + (ex.total_marks || 0) + ' marks</span>';
+      html += '</div>';
+      html += '<button class="btn-start" ' + disabled + ' onclick="enterExam(\'' + ex.id + '\')">';
+      html += '<i class="fas fa-play"></i> ' + btnText;
+      html += '</button></div>';
+    });
+
+    box.innerHTML = html;
+    box.className = 'exam-grid';
+
+  } catch (err) {
+    console.error(err);
+    box.innerHTML = '<p style="color:red">Error loading exams.</p>';
+  }
+}
+
+// ENTER EXAM
+async function enterExam(id) {
+  if (!confirm('Ready to start? Timer cannot be paused.')) return;
+
+  try {
+    const { data: ex } = await sb
+      .from('cbt_exams').select('*').eq('id', id).single();
+    currentExam = ex;
+
+    const { data: qs } = await sb
+      .from('cbt_questions')
+      .select('*, cbt_options(*)')
+      .eq('exam_id', id)
+      .order('order_index', { ascending: true });
+
+    questions = qs || [];
+    if (questions.length === 0) {
+      alert('No questions found.');
+      return;
+    }
+
+    const { data: att } = await sb
+      .from('cbt_attempts')
+      .insert([{ exam_id: id, student_id: 'student1', status: 'in_progress' }])
+      .select().single();
+    attemptId = att.id;
+
+    answers = {};
+    marked = new Set();
+    currentIndex = 0;
+    timeLeft = ex.duration_mins * 60;
+    violations = 0;
+    isLocked = false;
+
+    document.getElementById('exam-lobby').style.display = 'none';
+    document.getElementById('exam-active').style.display = 'flex';
+
+    buildNav();
+    showQuestion(0);
+    startTimer();
+    startAutoSave();
+    enableAntiCheat();
+
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+}
+</script>
+<script>
+// NAVIGATION & RENDERING
+function buildNav() {
+  const grid = document.getElementById('nav-grid');
+  grid.innerHTML = '';
+  document.getElementById('total-q-num').innerText = questions.length;
+  
+  questions.forEach((q, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'nav-btn';
+    btn.innerText = i + 1;
+    btn.onclick = () => showQuestion(i);
+    grid.appendChild(btn);
+  });
+  updateNav();
+}
+
+function updateNav() {
+  const answered = Object.keys(answers).length;
+  document.getElementById('nav-progress').innerText = 
+    answered + ' of ' + questions.length + ' Answered';
+  
+  const btns = document.querySelectorAll('.nav-btn');
+  btns.forEach((btn, i) => {
+    btn.className = 'nav-btn';
+    if (i === currentIndex) btn.classList.add('current');
+    if (answers[questions[i].id]) btn.classList.add('answered');
+    if (marked.has(i)) btn.classList.add('marked');
+  });
+}
+
+function showQuestion(index) {
+  currentIndex = index;
+  const q = questions[index];
+  
+  document.getElementById('current-q-num').innerText = index + 1;
+  document.getElementById('question-text').innerText = q.question_text;
+  
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  
+  const letters = ['A', 'B', 'C', 'D', 'E'];
+  
+  if (q.cbt_options && q.cbt_options.length > 0) {
+    q.cbt_options.forEach((opt, i) => {
+      const card = document.createElement('div');
+      const isSelected = answers[q.id] === opt.id;
+      card.className = 'option-card' + (isSelected ? ' selected' : '');
+      card.onclick = () => selectAnswer(q.id, opt.id);
+      
+      card.innerHTML = '<div class="option-letter">' + 
+        letters[i] + '</div><div class="option-text">' + 
+        opt.option_text + '</div>';
+      list.appendChild(card);
+    });
+  }
+  updateNav();
+}
+
+function selectAnswer(qId, optId) {
+  answers[qId] = optId;
+  showQuestion(currentIndex);
+}
+
+function nextQuestion() {
+  if (currentIndex < questions.length - 1) {
+    showQuestion(currentIndex + 1);
+  }
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) {
+    showQuestion(currentIndex - 1);
+  }
+}
+
+function markForReview() {
+  if (marked.has(currentIndex)) {
+    marked.delete(currentIndex);
+  } else {
+    marked.add(currentIndex);
+  }
+  updateNav();
+}
+
+// TIMER
+function startTimer() {
+  updateTimer();
+  timerInt = setInterval(() => {
+    if (isLocked) return;
+    timeLeft--;
+    updateTimer();
+    if (timeLeft <= 0) {
+      clearInterval(timerInt);
+      alert('Time is up!');
+      submitExam();
+    }
+  }, 1000);
+}
+
+function updateTimer() {
+  const h = Math.floor(timeLeft / 3600);
+  const m = Math.floor((timeLeft % 3600) / 60);
+  const s = timeLeft % 60;
+  
+  const str = String(h).padStart(2, '0') + ':' + 
+    String(m).padStart(2, '0') + ':' + 
+    String(s).padStart(2, '0');
+  document.getElementById('timer-display').innerText = str;
+  
+  const el = document.getElementById('exam-timer');
+  el.classList.remove('warning', 'danger');
+  if (timeLeft <= 60) el.classList.add('danger');
+  else if (timeLeft <= 300) el.classList.add('warning');
+}
+
+// AUTO SAVE
+function startAutoSave() {
+  setInterval(async () => {
+    if (isLocked || Object.keys(answers).length === 0) return;
+    const records = Object.keys(answers).map(qId => ({
+      attempt_id: attemptId,
+      question_id: qId,
+      selected_option_id: answers[qId]
+    }));
+    try {
+      await sb.from('cbt_answers').upsert(records, 
+        { onConflict: 'attempt_id,question_id' });
+      console.log('Saved');
+    } catch (e) { console.warn('Save failed'); }
+  }, 15000);
+}
+
+// ANTI CHEAT
+function enableAntiCheat() {
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !isLocked) triggerLockdown();
+  });
+  window.addEventListener('blur', () => {
+    if (!isLocked) setTimeout(() => {
+      if (!document.hasFocus()) triggerLockdown();
+    }, 200);
+  });
+}
+
+function triggerLockdown() {
+  isLocked = true;
+  violations++;
+  document.getElementById('lockdown-warning').innerText = 
+    'Warning ' + violations + ' of 3. ' + 
+    (violations >= 3 ? 'Auto-submitting...' : '');
+  document.getElementById('lockdown-overlay').classList.add('active');
+  
+  if (violations >= 3) {
+    setTimeout(() => submitExam(), 2000);
+  }
+}
+
+function resumeExam() {
+  if (violations >= 3) return;
+  isLocked = false;
+  document.getElementById('lockdown-overlay').classList.remove('active');
+}
+</script>
+<script>
+// SUBMIT MODAL
+function openSubmitModal() {
+  const count = Object.keys(answers).length;
+  const total = questions.length;
+  document.getElementById('submit-summary').innerText = 
+    'Answered ' + count + ' of ' + total + '.';
+  document.getElementById('submit-modal').style.display = 'flex';
+}
+
+function closeSubmitModal() {
+  document.getElementById('submit-modal').style.display = 'none';
+}
+
+// SUBMIT EXAM
+async function submitExam() {
+  closeSubmitModal();
+  isLocked = true;
+  clearInterval(timerInt);
+  
+  let score = 0;
+  let totalMarks = 0;
+  
+  questions.forEach(q => {
+    totalMarks += (q.marks || 1);
+    const selId = answers[q.id];
+    if (selId && q.cbt_options) {
+      const opt = q.cbt_options.find(o => o.id === selId);
+      if (opt && opt.is_correct) {
+        score += (q.marks || 1);
+      }
+    }
+  });
+  
+  const percent = totalMarks > 0 ? 
+    Math.round((score / totalMarks) * 100) : 0;
+  
+  try {
+    await sb.from('cbt_attempts').update({
+      status: 'completed',
+      score: score,
+      percentage: percent,
+      submitted_at: new Date().toISOString()
+    }).eq('id', attemptId);
+  } catch (e) {
+    console.error('Save error', e);
+  }
+  
+  document.getElementById('exam-active').style.display = 'none';
+  document.getElementById('exam-result').style.display = 'block';
+  
+  document.getElementById('result-score').innerText = 
+    score + '/' + totalMarks;
+  document.getElementById('result-percent').innerText = 
+    percent + '%';
+}
+
+// PRINT PDF
+function printResultPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, 210, 40, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.text('AL-ARABI EDUCATION', 14, 20);
+  doc.setFontSize(12);
+  doc.text('CBT Result Slip', 14, 30);
+  
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(14);
+  doc.text('Examination Details', 14, 60);
+  
+  doc.setFontSize(10);
+  doc.text('Subject: ' + (currentExam.subject || 'General'), 14, 75);
+  doc.text('Title: ' + currentExam.title, 14, 85);
+  
+  doc.text('Score: ' + document.getElementById('result-score').innerText, 14, 105);
+  doc.text('Percent: ' + document.getElementById('result-percent').innerText, 14, 115);
+  
+  doc.save('Result_' + Date.now() + '.pdf');
+}
+
+// RETURN TO LOBBY
+function returnToLobby() {
+  document.getElementById('exam-result').style.display = 'none';
+  document.getElementById('exam-lobby').style.display = 'block';
+  loadExams();
+}
+</script>
+</body>
+</html>

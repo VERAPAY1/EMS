@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#064e3b">
+<title>AL-ARABI EMS | Welcome</title>
+<link rel="icon" href="logo.png" type="image/png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== ROOT VARIABLES ===== */
+:root {
+  --emerald-950: #022c22;
+  --emerald-900: #064e3b;
+  --emerald-800: #065f46;
+  --emerald-700: #047857;
+  --emerald-500: #10b981;
+  --gold-600: #b8860b;
+  --gold-500: #d4a574;
+  --gold-400: #e6c89b;
+  --ivory: #fefaf3;
+  --cream: #f5efe3;
+  --white: #ffffff;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a68;
+  --shadow-sm: 0 2px 8px rgba(6, 78, 59, 0.06);
+  --shadow-md: 0 8px 24px rgba(6, 78, 59, 0.10);
+  --shadow-lg: 0 20px 50px rgba(6, 78, 59, 0.15);
+  --shadow-gold: 0 10px 30px rgba(212, 165, 116, 0.25);
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 28px;
+  --transition: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ===== RESET ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--ivory);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+/* ===== COMPACT NAVBAR ===== */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 12px 16px;
+  background: rgba(254, 250, 243, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(6, 78, 59, 0.08);
+}
+.nav-container {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; }
+.nav-logo {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--emerald-700), var(--emerald-900));
+  padding: 3px;
+  box-shadow: var(--shadow-sm);
+}
+.nav-logo img {
+  width: 100%; height: 100%;
+  border-radius: 7px;
+  object-fit: cover;
+  background: var(--ivory);
+}
+.nav-title .name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--emerald-900);
+  line-height: 1.1;
+}
+.nav-title .tag {
+  font-size: 0.6rem;
+  color: var(--gold-600);
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.menu-btn {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--emerald-700), var(--emerald-900));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ivory);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s var(--transition);
+}
+.menu-btn:hover { transform: scale(1.05); }
+.menu-btn i { font-size: 1rem; }
+
+/* ===== DRAWER ===== */
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 35, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+.nav-overlay.active { opacity: 1; pointer-events: auto; }
+.nav-drawer {
+  position: fixed;
+  top: 0; right: 0;
+  width: 85%;
+  max-width: 320px;
+  height: 100vh;
+  background: linear-gradient(160deg, var(--emerald-950) 0%, #0a0a23 100%);
+  z-index: 2000;
+  transform: translateX(100%);
+  transition: transform 0.5s var(--transition);
+  box-shadow: -20px 0 60px rgba(0,0,0,0.3);
+  overflow-y: auto;
+  padding: 24px 20px 80px;
+}
+.nav-drawer.active { transform: translateX(0); }
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.drawer-brand { display: flex; align-items: center; gap: 10px; color: var(--ivory); }
+.drawer-brand img {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: var(--ivory);
+  padding: 2px;
+}
+.drawer-brand .name { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; }
+.drawer-brand .tag { font-size: 0.58rem; color: var(--gold-400); letter-spacing: 1px; }
+.drawer-close {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  color: var(--ivory);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+.drawer-links { display: flex; flex-direction: column; gap: 4px; }
+.drawer-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: var(--ivory);
+  transition: all 0.3s var(--transition);
+}
+.drawer-link:hover { background: rgba(255,255,255,0.06); transform: translateX(4px); }
+.drawer-link .icon-box {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.2), rgba(16, 185, 129, 0.15));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-400);
+  font-size: 0.9rem;
+}
+.drawer-link .title { font-size: 0.9rem; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-logo"><img src="assets/images/logo.png" alt="AL-ARABI Logo"></div>
+      <div class="nav-title">
+        <div class="name">AL-ARABI</div>
+        <div class="tag">EDUCATION SYSTEM</div>
+      </div>
+    </a>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
+
+<!-- ===== DRAWER NAVIGATION ===== -->
+<div class="nav-overlay" id="navOverlay"></div>
+<aside class="nav-drawer" id="navDrawer">
+  <div class="drawer-header">
+    <div class="drawer-brand">
+      <img src="assets/images/logo.png" alt="Logo">
+      <div>
+        <div class="name">AL-ARABI</div>
+        <div class="tag">EMS v36.6</div>
+      </div>
+    </div>
+    <button class="drawer-close" id="drawerClose" aria-label="Close"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="drawer-links">
+    <a href="index.html" class="drawer-link">
+      <div class="icon-box"><i class="fas fa-home"></i></div>
+      <div class="title">Home</div>
+    </a>
+    <a href="registration.html" class="drawer-link">
+      <div class="icon-box"><i class="fas fa-user-plus"></i></div>
+      <div class="title">Registration</div>
+    </a>
+    <a href="admin.html" class="drawer-link">
+      <div class="icon-box"><i class="fas fa-user-shield"></i></div>
+      <div class="title">Admin Dashboard</div>
+    </a>
+    <a href="attendance.html" class="drawer-link">
+      <div class="icon-box"><i class="fas fa-clipboard-check"></i></div>
+      <div class="title">Attendance</div>
+    </a>
+    <a href="CBT.html" class="drawer-link">
+      <div class="icon-box"><i class="fas fa-laptop-code"></i></div>
+      <div class="title">CBT Examination</div>
+    </a>
+    <a href="dashboard.html" class="drawer-link">
+      <div class="icon-box"><i class="fas fa-th-large"></i></div>
+      <div class="title">Full Dashboard</div>
+    </a>
+  </div>
+</aside>
+
+<!-- ===== MAIN APP CONTENT ===== -->
+<main style="padding: 80px 20px 40px; max-width: 600px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; justify-content: center;">
+  
+  <!-- Welcome Header -->
+  <div style="text-align: center; margin-bottom: 32px;">
+    <div style="font-size: 0.75rem; color: var(--gold-600); letter-spacing: 2px; text-transform: uppercase; font-weight: 600; margin-bottom: 8px;">Welcome to</div>
+    <h1 style="font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 900; color: var(--emerald-900); line-height: 1.1; margin-bottom: 10px;">AL-ARABI EMS</h1>
+    <p style="color: var(--text-secondary); font-size: 0.92rem; max-width: 380px; margin: 0 auto;">Select a module to begin managing your institution with excellence.</p>
+  </div>
+
+  <!-- Quick Action Grid -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;">
+    <a href="registration.html" class="app-card" style="animation-delay: 0.1s;">
+      <div class="app-icon emerald"><i class="fas fa-user-plus"></i></div>
+      <div class="app-title">Registration</div>
+      <div class="app-desc">New Student</div>
+    </a>
+    <a href="admin.html" class="app-card" style="animation-delay: 0.2s;">
+      <div class="app-icon gold"><i class="fas fa-user-shield"></i></div>
+      <div class="app-title">Admin Panel</div>
+      <div class="app-desc">Management</div>
+    </a>
+    <a href="attendance.html" class="app-card" style="animation-delay: 0.3s;">
+      <div class="app-icon blue"><i class="fas fa-clipboard-check"></i></div>
+      <div class="app-title">Attendance</div>
+      <div class="app-desc">Daily Tracking</div>
+    </a>
+    <a href="CBT.html" class="app-card" style="animation-delay: 0.4s;">
+      <div class="app-icon purple"><i class="fas fa-laptop-code"></i></div>
+      <div class="app-title">CBT Exam</div>
+      <div class="app-desc">Testing Portal</div>
+    </a>
+  </div>
+      <a href="cbt-admin.html" class="app-card" style="animation-delay: 0.4s;">
+      <div class="app-icon gold"><i class="fas fa-laptop-code"></i></div>
+      <div class="app-title">CBT -ADMIN</div>
+      <div class="app-desc">Testing Portal</div>
+    </a>
+  </div>
+
+  <!-- Full Dashboard Button -->
+  <a href="attendance.html" class="app-btn-full" style="animation-delay: 0.5s;">
+    <i class="fas fa-th-large"></i> Open Full Enterprise Attendance Dashboard
+  </a>
+
+  <!-- Minimal Footer -->
+  <footer style="text-align: center; padding-top: 24px; margin-top: auto; border-top: 1px solid rgba(6,78,59,0.08);">
+    <p style="font-size: 0.72rem; color: var(--text-secondary);">© 2026 AL-ARABI Education System</p>
+    <p style="font-family: 'Amiri', serif; font-size: 0.85rem; color: var(--gold-500); margin-top: 4px;" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+  </footer>
+</main>
+
+<!-- ===== CARD & BUTTON STYLES ===== -->
+<style>
+  .app-card {
+    background: var(--white);
+    padding: 20px 16px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(6,78,59,0.05);
+    transition: all 0.3s var(--transition);
+    display: block;
+  }
+  .app-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .app-icon {
+    width: 48px; height: 48px;
+    margin: 0 auto 12px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 1.15rem;
+  }
+  .emerald { background: linear-gradient(135deg, var(--emerald-500), var(--emerald-700)); }
+  .gold { background: linear-gradient(135deg, var(--gold-500), var(--gold-600)); }
+  .blue { background: linear-gradient(135deg, #3b82f6, #1e40af); }
+  .purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+  .app-title { font-weight: 700; font-size: 0.92rem; color: var(--text-primary); margin-bottom: 4px; }
+  .app-desc { font-size: 0.72rem; color: var(--text-secondary); }
+  .app-btn-full {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: linear-gradient(135deg, var(--emerald-700), var(--emerald-900));
+    color: var(--ivory); padding: 16px; border-radius: 14px;
+    font-weight: 700; font-size: 0.95rem;
+    box-shadow: var(--shadow-lg); transition: all 0.3s var(--transition);
+  }
+  .app-btn-full:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(6, 78, 59, 0.25); }
+  @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+  .app-card, .app-btn-full { animation: fadeSlideUp 0.5s var(--transition) backwards; }
+</style>
+<script>
+// ==========================================
+// DRAWER NAVIGATION
+// ==========================================
+const menuBtn = document.getElementById('menuBtn');
+const drawerClose = document.getElementById('drawerClose');
+const navDrawer = document.getElementById('navDrawer');
+const navOverlay = document.getElementById('navOverlay');
+
+function openDrawer() {
+  navDrawer.classList.add('active');
+  navOverlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  navDrawer.classList.remove('active');
+  navOverlay.classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+menuBtn.addEventListener('click', openDrawer);
+drawerClose.addEventListener('click', closeDrawer);
+navOverlay.addEventListener('click', closeDrawer);
+
+// Close drawer when clicking a link
+document.querySelectorAll('.drawer-link').forEach(link => {
+  link.addEventListener('click', () => {
+    setTimeout(closeDrawer, 150);
+  });
+});
+
+// ==========================================
+// PREVENT DOUBLE-TAP ZOOM ON MOBILE
+// ==========================================
+let lastTouchEnd = 0;
+document.addEventListener('touchend', (event) => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) {
+    event.preventDefault();
+  }
+  lastTouchEnd = now;
+}, false);
+
+// ==========================================
+// CONSOLE WELCOME
+// ==========================================
+console.log('%c🕌 AL-ARABI EMS', 'font-size: 18px; font-weight: bold; color: #064e3b;');
+console.log('%cVersion 36.6 | Compact App Mode', 'font-size: 11px; color: #d4a574;');
+</script>
+
+</body>
+</html>

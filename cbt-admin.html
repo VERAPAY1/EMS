@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f172a">
+<title>AL-ARABI EMS | CBT Admin Secure Access</title>
+<link rel="icon" href="logo.png" type="image/png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #0f172a;
+  --accent: #059669;
+  --danger: #dc2626;
+  --warning: #f59e0b;
+  --surface: rgba(255,255,255,0.95);
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #064e3b 100%);
+  overflow: hidden; position: relative;
+}
+
+/* ANIMATED BACKGROUND */
+.bg-particles {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(5,150,105,0.15) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: drift 20s linear infinite;
+}
+@keyframes drift { to { background-position: 40px 40px; } }
+
+/* NETWORK STATUS BAR */
+.net-bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  padding: 10px; text-align: center;
+  font-size: 0.78rem; font-weight: 700;
+  z-index: 100; transform: translateY(-100%);
+  transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  letter-spacing: 0.5px;
+}
+.net-bar.offline { background: var(--danger); color: white; transform: translateY(0); }
+.net-bar.online { background: var(--accent); color: white; transform: translateY(0); }
+
+/* LOGIN CARD */
+.login-card {
+  position: relative; z-index: 10;
+  background: var(--surface);
+  backdrop-filter: blur(24px);
+  border-radius: 28px; padding: 52px 44px;
+  width: 100%; max-width: 440px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.1);
+  text-align: center;
+  animation: cardEntry 0.7s cubic-bezier(0.16,1,0.3,1);
+}
+@keyframes cardEntry {
+  from { opacity: 0; transform: translateY(40px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* IMAGE LOGO */
+.logo-img {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 24px;
+  display: block;
+  box-shadow: 0 12px 35px rgba(5,150,105,0.35);
+  border: 3px solid rgba(5,150,105,0.3);
+  animation: logoPulse 2s ease-in-out infinite;
+}
+@keyframes logoPulse {
+  0%,100% { transform: scale(1); box-shadow: 0 12px 35px rgba(5,150,105,0.35); }
+  50% { transform: scale(1.05); box-shadow: 0 16px 45px rgba(5,150,105,0.5); }
+}
+
+/* TYPOGRAPHY */
+.login-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem; font-weight: 900;
+  color: var(--primary); margin-bottom: 6px;
+}
+.login-subtitle { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 36px; line-height: 1.5; }
+.security-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 14px; border-radius: 20px;
+  background: rgba(5,150,105,0.08); color: var(--accent);
+  font-size: 0.68rem; font-weight: 700; margin-bottom: 28px;
+  letter-spacing: 0.3px;
+}
+
+/* FORM INPUTS */
+.input-group { margin-bottom: 18px; text-align: left; }
+.input-label {
+  display: block; font-size: 0.78rem; font-weight: 600;
+  color: var(--text); margin-bottom: 7px; letter-spacing: 0.2px;
+}
+.input-field {
+  width: 100%; padding: 14px 18px;
+  border: 2px solid var(--border); border-radius: 14px;
+  font-size: 0.95rem; background: #f8fafc; color: var(--text);
+  transition: all 0.3s; outline: none;
+}
+.input-field:focus {
+  border-color: var(--accent); background: white;
+  box-shadow: 0 0 0 4px rgba(5,150,105,0.1);
+}
+.pwd-wrapper { position: relative; }
+.pwd-toggle {
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); cursor: pointer; font-size: 0.9rem;
+  padding: 4px; transition: color 0.2s;
+}
+.pwd-toggle:hover { color: var(--accent); }
+
+/* LOGIN BUTTON */
+.btn-login {
+  width: 100%; padding: 16px; border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), #047857);
+  color: white; font-size: 1rem; font-weight: 700;
+  border: none; cursor: pointer; margin-top: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: all 0.3s; letter-spacing: 0.3px;
+}
+.btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(5,150,105,0.35); }
+.btn-login:active { transform: translateY(0); }
+.btn-login:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ERROR MESSAGE */
+.error-box {
+  margin-top: 18px; padding: 12px 16px; border-radius: 10px;
+  background: rgba(220,38,38,0.08); color: var(--danger);
+  font-size: 0.82rem; font-weight: 600; display: none;
+  border: 1px solid rgba(220,38,38,0.15);
+}
+.error-box.visible { display: block; animation: shake 0.4s ease; }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* FOOTER */
+.login-footer {
+  margin-top: 28px; font-size: 0.68rem; color: var(--text-muted);
+  line-height: 1.6; opacity: 0.8;
+}
+
+/* VERIFICATION OVERLAY */
+.verify-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--primary);
+  display: none; flex-direction: column;
+  align-items: center; justify-content: center; color: white;
+}
+.verify-overlay.active { display: flex; }
+.v-spinner {
+  width: 64px; height: 64px;
+  border: 4px solid rgba(255,255,255,0.1);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin-bottom: 28px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.v-text { font-size: 1.1rem; font-weight: 600; letter-spacing: 2px; opacity: 0.9; }
+.v-granted {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem; font-weight: 900; color: var(--accent);
+  opacity: 0; transform: scale(0.7);
+  transition: all 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.v-granted.show { opacity: 1; transform: scale(1); }
+.v-sub { font-size: 0.85rem; opacity: 0.6; margin-top: 12px; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+<div class="bg-particles"></div>
+<div class="net-bar" id="netBar"></div>
+
+<!-- VERIFICATION SCREEN -->
+<div class="verify-overlay" id="verifyScreen">
+  <div class="v-spinner" id="vSpinner"></div>
+  <div class="v-text" id="vText">AUTHENTICATING...</div>
+  <div class="v-granted" id="vGranted">ACCESS GRANTED</div>
+  <div class="v-sub" id="vSub">Redirecting to CBT Command Center</div>
+</div>
+
+<!-- LOGIN CARD -->
+<div class="login-card">
+  <img src="assets/images/admin.png" alt="AL-ARABI EMS" class="logo-img">
+  <h1 class="login-title">CBT Admin Portal</h1>
+  <p class="login-subtitle">AL-ARABI Education Management System<br>Teacher's Operation System</p>
+  <div class="security-badge"><i class="fas fa-lock"></i> 256-BIT ENCRYPTED • LIVE SECURE</div>
+
+  <form id="loginForm" onsubmit="handleLogin(event)">
+    <div class="input-group">
+      <label class="input-label">Administrator Email</label>
+      <input type="email" class="input-field" id="email" placeholder="admin@alarabi.edu" required autocomplete="email">
+    </div>
+    <div class="input-group">
+      <label class="input-label">Secure Password</label>
+      <div class="pwd-wrapper">
+        <input type="password" class="input-field" id="password" placeholder="Enter your password" required autocomplete="current-password">
+        <span class="pwd-toggle" onclick="togglePwd()"><i class="fas fa-eye" id="pwdIcon"></i></span>
+      </div>
+    </div>
+    <button type="submit" class="btn-login" id="loginBtn">
+      <i class="fas fa-fingerprint"></i> SECURE LOGIN
+    </button>
+  </form>
+
+  <div class="error-box" id="errorBox"></div>
+
+  <div class="login-footer">
+    <i class="fas fa-shield-virus"></i> Protected by AL-ARABI EMS v36.6<br>
+    Unauthorized access is monitored and logged.
+  </div>
+</div>
+
+<script>
+// === SUPABASE CONFIG ===
+const SUPABASE_URL = 'https://qqqxxbixuzdihfnmutpp.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_oAqdfpvMyYEdeMzZuIb57w_muvQROpY';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// === RATE LIMITING ===
+let attempts = 0;
+let lastAttempt = 0;
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_MS = 300000;
+
+// === NETWORK MONITOR ===
+function updateNet() {
+  const bar = document.getElementById('netBar');
+  if (!navigator.onLine) {
+    bar.className = 'net-bar offline';
+    bar.innerText = '⚠ NO INTERNET CONNECTION — CHECK YOUR NETWORK';
+  } else {
+    bar.className = 'net-bar online';
+    bar.innerText = '✓ CONNECTION RESTORED — SYSTEM ONLINE';
+    setTimeout(() => { bar.style.transform = 'translateY(-100%)'; }, 3000);
+  }
+}
+window.addEventListener('online', updateNet);
+window.addEventListener('offline', updateNet);
+updateNet();
+
+// === PASSWORD TOGGLE ===
+function togglePwd() {
+  const inp = document.getElementById('password');
+  const icon = document.getElementById('pwdIcon');
+  if (inp.type === 'password') {
+    inp.type = 'text'; icon.className = 'fas fa-eye-slash';
+  } else {
+    inp.type = 'password'; icon.className = 'fas fa-eye';
+  }
+}
+
+// === LOGIN HANDLER ===
+async function handleLogin(e) {
+  e.preventDefault();
+  const now = Date.now();
+
+  if (attempts >= MAX_ATTEMPTS && (now - lastAttempt) < LOCKOUT_MS) {
+    const remaining = Math.ceil((LOCKOUT_MS - (now - lastAttempt)) / 60000);
+    showError('Account locked. Try again in ' + remaining + ' minute(s).');
+    return;
+  }
+
+  if (!navigator.onLine) {
+    showError('No internet connection. Please check your network.');
+    return;
+  }
+
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AUTHENTICATING...';
+
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({
+      email: document.getElementById('email').value.trim(),
+      password: document.getElementById('password').value
+    });
+    if (error) throw error;
+
+    const { data: admin, error: adminErr } = await sb
+      .from('admin_users')
+      .select('*')
+      .eq('email', data.user.email)
+      .single();
+
+    if (adminErr || !admin || admin.role !== 'super_admin') {
+      throw new Error('Access denied: Administrator privileges required.');
+    }
+
+    startVerification();
+  } catch (err) {
+    attempts++;
+    lastAttempt = now;
+    showError(err.message || 'Invalid credentials. Please try again.');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-fingerprint"></i> SECURE LOGIN';
+  }
+}
+
+// === 6-8 SECOND VERIFICATION SEQUENCE ===
+function startVerification() {
+  const overlay = document.getElementById('verifyScreen');
+  const spinner = document.getElementById('vSpinner');
+  const text = document.getElementById('vText');
+  const granted = document.getElementById('vGranted');
+  const sub = document.getElementById('vSub');
+
+  overlay.classList.add('active');
+
+  setTimeout(() => { text.innerText = 'VERIFYING ADMIN PRIVILEGES...'; }, 2000);
+  setTimeout(() => { text.innerText = 'ESTABLISHING SECURE SESSION...'; }, 4500);
+  setTimeout(() => {
+    spinner.style.display = 'none';
+    text.style.display = 'none';
+    sub.style.display = 'none';
+    granted.classList.add('show');
+  }, 6000);
+  setTimeout(() => {
+    window.location.href = 'cbt-dashboard.html';
+  }, 8000);
+}
+
+// === ERROR DISPLAY ===
+function showError(msg) {
+  const box = document.getElementById('errorBox');
+  box.innerText = msg;
+  box.classList.add('visible');
+  setTimeout(() => { box.classList.remove('visible'); }, 4000);
+}
+
+// === PREVENT BACK BUTTON BYPASS ===
+history.pushState(null, null, location.href);
+window.onpopstate = function() { history.go(1); };
+</script>
+</body>
+</html>
