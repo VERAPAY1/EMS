@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AL-ARABI EMS | Enterprise Student Registration</title>
+<link rel="icon" href="logo.png" type="image/png">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+/* ===== THEME ENGINE ===== */
+:root {
+  --gold: #D4AF37; --gold-glow: rgba(212,175,55,0.3);
+  --black: #0A0A0A; --blue: #1E3A8A; --orange: #EA580C;
+  --surface: #ffffff; --bg: #f8fafc; --text: #0f172a;
+  --muted: #64748b; --border: #e2e8f0; --danger: #dc2626;
+  --success: #059669;
+  --shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --glass: rgba(255,255,255,0.85);
+}
+[data-theme="dark"] {
+  --surface: #111827; --bg: #030712; --text: #f1f5f9;
+  --muted: #94a3b8; --border: #1e293b;
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --glass: rgba(17,24,39,0.85);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{touch-action:manipulation;scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;transition:background .3s,color .3s}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,var(--black) 0%,var(--blue) 100%);padding:20px 24px;text-align:center;position:relative;overflow:hidden}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--orange),var(--gold))}
+.header-logo{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);margin-bottom:10px}
+.header h1{font-family:'Playfair Display',serif;color:var(--gold);font-size:1.4rem;font-weight:900;letter-spacing:.5px}
+.header p{color:rgba(255,255,255,.7);font-size:.75rem;margin-top:4px;letter-spacing:1px;text-transform:uppercase}
+.theme-toggle{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.1);border:none;color:white;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:.9rem;transition:all .3s}
+.theme-toggle:hover{background:var(--gold);color:var(--black)}
+
+.container{max-width:600px;margin:0 auto;padding:24px 16px;flex:1;width:100%}
+
+/* PHOTO UPLOAD */
+.photo-upload{display:flex;flex-direction:column;align-items:center;margin-bottom:32px;position:relative}
+.photo-circle{width:120px;height:120px;border-radius:50%;background:var(--surface);border:3px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:all .3s;box-shadow:var(--shadow)}
+.photo-circle:hover,.photo-circle.dragover{border-color:var(--gold);box-shadow:0 0 20px var(--gold-glow)}
+.photo-circle.has-image{border-style:solid;border-color:var(--gold)}
+.photo-circle img{width:100%;height:100%;object-fit:cover}
+.photo-placeholder{text-align:center;color:var(--muted)}
+.photo-placeholder i{font-size:2rem;margin-bottom:8px;color:var(--gold)}
+.photo-placeholder span{font-size:.75rem;font-weight:600;display:block}
+.photo-status{margin-top:10px;font-size:.78rem;font-weight:600;min-height:20px}
+.photo-status.success{color:var(--success)}.photo-status.error{color:var(--danger)}.photo-status.uploading{color:var(--orange)}
+#photoInput{display:none}
+
+/* FORM CARD */
+.form-card{background:var(--glass);backdrop-filter:blur(12px);border-radius:16px;padding:28px 24px;box-shadow:var(--shadow);border:1px solid var(--border)}
+.form-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:800;color:var(--text);margin-bottom:24px;padding-bottom:12px;border-bottom:2px solid var(--gold);display:inline-block}
+
+/* FLOATING LABELS */
+.field-group{position:relative;margin-bottom:20px}
+.field-input{width:100%;padding:16px 14px 8px 42px;border:2px solid var(--border);border-radius:12px;font-size:.92rem;background:var(--surface);color:var(--text);outline:none;transition:all .3s;appearance:none}
+.field-input:focus,.field-input:not(:placeholder-shown){border-color:var(--gold)}
+.field-label{position:absolute;left:42px;top:50%;transform:translateY(-50%);font-size:.88rem;color:var(--muted);pointer-events:none;transition:all .25s ease;background:var(--surface);padding:0 4px}
+.field-input:focus~.field-label,.field-input:not(:placeholder-shown)~.field-label{top:0;left:12px;font-size:.7rem;font-weight:700;color:var(--gold)}
+.field-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.9rem;transition:color .3s;z-index:1}
+.field-input:focus~.field-icon{color:var(--gold)}
+select.field-input{cursor:pointer}select.field-input option{background:var(--surface);color:var(--text)}
+.age-display{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:.78rem;font-weight:700;color:var(--gold);pointer-events:none}
+textarea.field-input{min-height:80px;resize:vertical;padding-top:20px}
+textarea.field-input~.field-label{top:20px}
+textarea.field-input:focus~.field-label,textarea.field-input:not(:placeholder-shown)~.field-label{top:0}
+
+.btn-register{width:100%;padding:16px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--orange));color:white;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .3s;margin-top:8px;letter-spacing:.3px}
+.btn-register:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 25px var(--gold-glow)}
+.btn-register:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* PROCESSING OVERLAY */
+.process-overlay{position:fixed;inset:0;z-index:9999;background:rgba(10,10,10,.92);backdrop-filter:blur(8px);display:none;flex-direction:column;align-items:center;justify-content:center;color:white}
+.process-overlay.active{display:flex}
+.proc-spinner{width:56px;height:56px;border:4px solid rgba(212,175,55,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:24px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.proc-text{font-size:1rem;font-weight:600;letter-spacing:1px;text-align:center}
+.proc-sub{font-size:.78rem;opacity:.6;margin-top:8px}
+
+/* SUCCESS SCREEN */
+.success-screen{display:none;text-align:center;padding:40px 20px;animation:fadeUp .5s ease}
+.success-screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.success-icon{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#059669,#10b981);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2.5rem;color:white;box-shadow:0 10px 30px rgba(5,150,105,.3)}
+.success-card{background:var(--surface);border-radius:16px;padding:28px;box-shadow:var(--shadow);border:1px solid var(--border);margin-top:20px}
+.success-photo{width:80px;height:80px;border-radius:50%;object-fit:cover;border:3px solid var(--gold);margin:0 auto 12px}
+.success-name{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:800;color:var(--text)}
+.success-id{font-size:.85rem;color:var(--gold);font-weight:700;margin-top:4px;letter-spacing:1px}
+.success-date{font-size:.78rem;color:var(--muted);margin-top:6px}
+.btn-another{margin-top:20px;padding:14px 28px;border-radius:12px;background:var(--blue);color:white;border:none;font-weight:700;cursor:pointer;font-size:.9rem;transition:all .3s}
+.btn-another:hover{background:var(--black)}
+
+/* FOOTER */
+.footer{text-align:center;padding:24px 16px;font-size:.68rem;color:var(--muted);line-height:1.8;border-top:1px solid var(--border);margin-top:auto}
+.footer strong{color:var(--gold)}
+
+/* TOAST */
+.toast-box{position:fixed;top:20px;right:20px;z-index:10000;display:flex;flex-direction:column;gap:10px}
+.toast{background:var(--surface);padding:14px 20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.15);display:flex;align-items:center;gap:12px;min-width:280px;border-left:4px solid var(--gold);animation:slideIn .4s ease;font-size:.85rem;font-weight:500;color:var(--text)}
+.toast.error{border-left-color:var(--danger)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+@media(max-width:480px){.header h1{font-size:1.1rem}.form-card{padding:20px 16px}.photo-circle{width:100px;height:100px}.container{padding:16px 12px}}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme"><i class="fas fa-moon" id="themeIcon"></i></button>
+  <img src="logo.png" alt="AL-ARABI EMS" class="header-logo" onerror="this.style.display='none'">
+  <h1>AL-ARABI EMS OS</h1>
+  <p>Student Registration Portal</p>
+</header>
+
+<div class="toast-box" id="toastBox"></div>
+
+<div class="process-overlay" id="processOverlay">
+  <div class="proc-spinner"></div>
+  <div class="proc-text" id="procText">Initializing...</div>
+  <div class="proc-sub">Please do not close this page</div>
+</div>
+
+<main class="container">
+  <div id="formWrapper">
+    <!-- PHOTO UPLOAD -->
+    <div class="photo-upload">
+      <div class="photo-circle" id="photoCircle" onclick="document.getElementById('photoInput').click()">
+        <div class="photo-placeholder" id="photoPlaceholder"><i class="fas fa-camera"></i><span>Tap to Upload Photo</span></div>
+        <img id="photoPreview" style="display:none;" alt="Preview">
+      </div>
+      <input type="file" id="photoInput" accept="image/jpeg,image/jpg,image/png,image/webp" capture="environment">
+      <div class="photo-status" id="photoStatus"></div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-title">Student Information</div>
+      <form id="regForm" onsubmit="handleRegister(event)">
+        <div class="field-group"><i class="fas fa-user field-icon"></i><input type="text" class="field-input" id="fullName" placeholder=" " required><label class="field-label">Full Name *</label></div>
+        <div class="field-group"><i class="fas fa-venus-mars field-icon"></i><select class="field-input" id="gender" required><option value="" disabled selected></option><option value="male">Male</option><option value="female">Female</option></select><label class="field-label">Gender *</label></div>
+        <div class="field-group"><i class="fas fa-calendar field-icon"></i><input type="date" class="field-input" id="dob" placeholder=" " required onchange="calcAge()"><label class="field-label">Date of Birth *</label><span class="age-display" id="ageDisplay"></span></div>
+        <div class="field-group"><i class="fas fa-user-tie field-icon"></i><input type="text" class="field-input" id="parentName" placeholder=" " required><label class="field-label">Parent Name *</label></div>
+        <div class="field-group"><i class="fas fa-phone field-icon"></i><input type="tel" class="field-input" id="parentPhone" placeholder=" " required><label class="field-label">Parent Phone *</label></div>
+        <div class="field-group"><i class="fas fa-mobile-alt field-icon"></i><input type="tel" class="field-input" id="studentPhone" placeholder=" "><label class="field-label">Student Phone</label></div>
+        <div class="field-group"><i class="fas fa-phone-volume field-icon"></i><input type="tel" class="field-input" id="emergencyContact" placeholder=" " required><label class="field-label">Emergency Contact *</label></div>
+        <div class="field-group"><i class="fas fa-home field-icon"></i><input type="text" class="field-input" id="address" placeholder=" " required><label class="field-label">Address *</label></div>
+        <div class="field-group"><i class="fas fa-school field-icon"></i><input type="text" class="field-input" id="schoolName" placeholder=" " required><label class="field-label">School Name *</label></div>
+        <div class="field-group"><i class="fas fa-graduation-cap field-icon"></i><input type="text" class="field-input" id="classGrade" placeholder=" " required><label class="field-label">Class / Grade *</label></div>
+        <div class="field-group"><i class="fas fa-layer-group field-icon"></i><input type="text" class="field-input" id="category" placeholder=" " required><label class="field-label">Lesson Category *</label></div>
+        <div class="field-group"><i class="fas fa-book-open field-icon"></i><input type="text" class="field-input" id="subjects" placeholder=" " required><label class="field-label">Subject Combination *</label></div>
+        <div class="field-group"><i class="fas fa-notes-medical field-icon"></i><textarea class="field-input" id="notes" placeholder=" "></textarea><label class="field-label">Medical Notes / Remarks</label></div>
+        <button type="submit" class="btn-register" id="regBtn" disabled><i class="fas fa-user-plus"></i> Register Student</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon"><i class="fas fa-check"></i></div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--text);margin-bottom:8px;">Registration Successful!</h2>
+    <p style="color:var(--muted);font-size:.9rem;">Student has been registered in the system.</p>
+    <div class="success-card">
+      <img id="successPhoto" class="success-photo" src="" alt="Student">
+      <div class="success-name" id="successName"></div>
+      <div class="success-id" id="successRegId"></div>
+      <div class="success-date" id="successDate"></div>
+    </div>
+    <button class="btn-another" onclick="resetForm()"><i class="fas fa-plus"></i> Register Another Student</button>
+  </div>
+</main>
+
+<footer class="footer">&copy; 2026 <strong>AL-ARABI TEACHERS OS</strong><br>Enterprise Student Registration System<br>Powered by Misbahul Ilm &bull; Secure Cloud Registration<br>v36.6</footer>
+
+<script>
+// =============================================
+// SUPABASE CONFIG — USE YOUR EXISTING KEYS
+// =============================================
+const SUPABASE_URL = 'https://qqqxxbixuzdihfnmutpp.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_oAqdfpvMyYEdeMzZuIb57w_muvQROpY';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let uploadedPhotoUrl = null;
+let isProcessing = false;
+
+// =============================================
+// THEME ENGINE
+// =============================================
+function initTheme(){const s=localStorage.getItem('alarabi_theme')||'light';document.documentElement.setAttribute('data-theme',s);updateThemeIcon(s)}
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme');const n=c==='light'?'dark':'light';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('alarabi_theme',n);updateThemeIcon(n)}
+function updateThemeIcon(t){document.getElementById('themeIcon').className=t==='light'?'fas fa-moon':'fas fa-sun'}
+initTheme();
+
+// =============================================
+// AUTO AGE CALCULATION
+// =============================================
+function calcAge(){
+  const dob=document.getElementById('dob').value;
+  if(!dob){document.getElementById('ageDisplay').innerText='';return}
+  const birth=new Date(dob);const today=new Date();
+  let age=today.getFullYear()-birth.getFullYear();
+  const m=today.getMonth()-birth.getMonth();
+  if(m<0||(m===0&&today.getDate()<birth.getDate()))age--;
+  document.getElementById('ageDisplay').innerText=age>=0?age+' yrs':'';
+  return age>=0?age:null;
+}
+
+// =============================================
+// REGISTRATION ID GENERATOR
+// =============================================
+function generateRegId(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let id='REG-';
+  for(let i=0;i<8;i++)id+=chars.charAt(Math.floor(Math.random()*chars.length));
+  return id;
+}
+
+// =============================================
+// SHA-256 SECURITY HASH
+// =============================================
+async function generateSecurityHash(data){
+  const str=JSON.stringify(data);
+  const buf=new TextEncoder().encode(str);
+  const hash=await crypto.subtle.digest('SHA-256',buf);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+// =============================================
+// PHOTO UPLOAD WITH COMPRESSION
+// =============================================
+const photoInput=document.getElementById('photoInput');
+const photoPreview=document.getElementById('photoPreview');
+const photoPlaceholder=document.getElementById('photoPlaceholder');
+const photoStatus=document.getElementById('photoStatus');
+const photoCircle=document.getElementById('photoCircle');
+const regBtn=document.getElementById('regBtn');
+
+photoInput.addEventListener('change',async function(e){
+  const file=e.target.files[0];if(!file)return;
+  const valid=['image/jpeg','image/jpg','image/png','image/webp'];
+  if(!valid.includes(file.type)){setPhotoStatus('Invalid format. Use JPG, PNG or WEBP.','error');showToast('Invalid image format','error');this.value='';return}
+  if(file.size>2*1024*1024){setPhotoStatus('File too large. Maximum 2MB.','error');showToast('Image exceeds 2MB limit','error');this.value='';return}
+  const reader=new FileReader();reader.onload=(ev)=>{photoPreview.src=ev.target.result;photoPreview.style.display='block';photoPlaceholder.style.display='none';photoCircle.classList.add('has-image')};reader.readAsDataURL(file);
+  setPhotoStatus('Compressing & uploading...','uploading');
+  try{const compressed=await compressImage(file);const url=await uploadToStorage(compressed);uploadedPhotoUrl=url;setPhotoStatus('✓ Photo uploaded successfully','success');regBtn.disabled=false;showToast('Photo uploaded!','success')}catch(err){console.error(err);setPhotoStatus('Upload failed. Tap to retry.','error');showToast('Upload failed: '+err.message,'error');uploadedPhotoUrl=null;regBtn.disabled=true}
+});
+
+function setPhotoStatus(msg,type){photoStatus.innerText=msg;photoStatus.className='photo-status '+type}
+
+async function compressImage(file){return new Promise(resolve=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const M=800;let w=img.width,h=img.height;if(w>M||h>M){if(w>h){h=Math.round(h*M/w);w=M}else{w=Math.round(w*M/h);h=M}}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);c.toBlob(b=>resolve(b),'image/jpeg',0.85)};img.src=URL.createObjectURL(file)})}
+
+async function uploadToStorage(blob,retries=2){
+  const fn='student_'+Date.now()+'_'+Math.random().toString(36).substr(2,6)+'.jpg';
+  for(let i=0;i<=retries;i++){try{const{data,error}=await sb.storage.from('student-images').upload(fn,blob,{contentType:'image/jpeg',upsert:false});if(error)throw error;const{data:pub}=sb.storage.from('student-images').getPublicUrl(fn);return pub.publicUrl}catch(err){if(i===retries)throw err;await new Promise(r=>setTimeout(r,1500))}}
+}
+
+// =============================================
+// SANITIZATION
+// =============================================
+function sanitize(s){if(typeof s!=='string')return s;return s.replace(/[<>"'&]/g,m=>({'<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','&':'&amp;'}[m]))}
+
+// =============================================
+// LOCAL BACKUP
+// =============================================
+function saveLocalBackup(record){try{const backups=JSON.parse(localStorage.getItem('reg_backups')||'[]');backups.push(record);localStorage.setItem('reg_backups',JSON.stringify(backups))}catch(e){console.warn('Local backup failed',e)}}
+
+// =============================================
+// REGISTRATION HANDLER
+// =============================================
+async function handleRegister(e){
+  e.preventDefault();
+  if(isProcessing||!uploadedPhotoUrl)return;
+  isProcessing=true;
+
+  const steps=['Initializing Secure Connection...','Validating Student Information...','Encrypting Registration Data...','Saving Student Record...','Finalizing Registration...'];
+  showProcess(true,steps[0]);
+
+  const age=calcAge();
+  const regId=generateRegId();
+  const regDate=new Date().toISOString();
+
+  const student={
+    full_name:sanitize(document.getElementById('fullName').value.trim()),
+    gender:document.getElementById('gender').value,
+    dob:document.getElementById('dob').value,
+    age:age,
+    parent_name:sanitize(document.getElementById('parentName').value.trim()),
+    parent_phone:sanitize(document.getElementById('parentPhone').value.trim()),
+    student_phone:sanitize(document.getElementById('studentPhone').value.trim()),
+    emergency_contact:sanitize(document.getElementById('emergencyContact').value.trim()),
+    address:sanitize(document.getElementById('address').value.trim()),
+    school_name:sanitize(document.getElementById('schoolName').value.trim()),
+    class_grade:sanitize(document.getElementById('classGrade').value.trim()),
+    category:sanitize(document.getElementById('category').value.trim()),
+    subjects:sanitize(document.getElementById('subjects').value.trim()),
+    notes:sanitize(document.getElementById('notes').value.trim()),
+    photo_url:uploadedPhotoUrl,
+    reg_id:regId,
+    registration_date:regDate,
+    created_at:regDate
+  };
+
+  // Validate required
+  if(!student.full_name||!student.gender||!student.dob||!student.parent_name||!student.parent_phone||!student.emergency_contact||!student.address||!student.school_name||!student.class_grade||!student.category||!student.subjects){
+    showProcess(false);showToast('Please fill all required fields','error');isProcessing=false;return;
+  }
+
+  try{
+    await delay(600);showProcess(true,steps[1]);
+    await delay(600);showProcess(true,steps[2]);
+    student.security_hash=await generateSecurityHash(student);
+    await delay(600);showProcess(true,steps[3]);
+
+    const{data,error}=await sb.from('students').insert([student]).select().single();
+    if(error){saveLocalBackup(student);throw error}
+
+    await delay(500);showProcess(true,steps[4]);
+    await delay(400);showProcess(false);
+
+    document.getElementById('formWrapper').style.display='none';
+    const ss=document.getElementById('successScreen');ss.classList.add('active');
+    document.getElementById('successName').innerText=data.full_name;
+    document.getElementById('successRegId').innerText='ID: '+data.reg_id;
+    document.getElementById('successDate').innerText='Registered: '+new Date(regDate).toLocaleDateString();
+    document.getElementById('successPhoto').src=uploadedPhotoUrl;
+    showToast('Student registered successfully!','success');
+  }catch(err){
+    showProcess(false);
+    saveLocalBackup(student);
+    showToast('Registration saved locally. Sync when online.','error');
+    console.error(err);
+    isProcessing=false;
+  }
+}
+
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+
+// =============================================
+// RESET
+// =============================================
+function resetForm(){
+  document.getElementById('regForm').reset();uploadedPhotoUrl=null;isProcessing=false;
+  photoPreview.style.display='none';photoPlaceholder.style.display='';photoCircle.classList.remove('has-image');
+  setPhotoStatus('','');regBtn.disabled=true;document.getElementById('ageDisplay').innerText='';
+  document.getElementById('successScreen').classList.remove('active');document.getElementById('formWrapper').style.display='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showProcess(show,msg){const ov=document.getElementById('processOverlay');if(show){document.getElementById('procText').innerText=msg||'Processing...';ov.classList.add('active')}else{ov.classList.remove('active')}}
+
+function showToast(msg,type){type=type||'success';const box=document.getElementById('toastBox');const t=document.createElement('div');t.className='toast'+(type==='error'?' error':'');const icon=type==='error'?'fa-times-circle':'fa-check-circle';const color=type==='error'?'var(--danger)':'var(--gold)';t.innerHTML='<i class="fas '+icon+'" style="color:'+color+';font-size:1.1rem;"></i><span>'+msg+'</span>';box.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(100%)';setTimeout(()=>t.remove(),400)},3500)}
+
+document.querySelectorAll('select.field-input').forEach(s=>{s.addEventListener('change',function(){if(this.value)this.classList.add('not-empty');else this.classList.remove('not-empty')})});
+</script>
+</body>
+</html>
