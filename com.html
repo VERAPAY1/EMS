@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<meta name="description" content="AL-ARABI EMS - Complaint Management" />
+<meta name="theme-color" content="#0b1020" />
+<title>AL-ARABI EMS | Complaint Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg-0:#fafaf7; --bg-1:#f5f5f0; --surface:#ffffff; --surface-2:#fbfaf6;
+  --text-0:#0f1a16; --text-1:#1f2d28; --text-2:#4a5b54; --text-3:#728079; --text-4:#9aa6a0;
+  --emerald:#065f46; --emerald-grad:linear-gradient(135deg,#065f46 0%,#059669 100%); --emerald-soft:#d1fae5;
+  --gold:#b8860b; --gold-grad:linear-gradient(135deg,#d4af37 0%,#b8860b 100%);
+  --blue:#1e3a8a; --blue-soft:#dbeafe; --primary:var(--emerald); --primary-soft:var(--emerald-soft);
+  --danger:#b91c1c; --warning:#b45309; --info:#1e40af; --success:#059669;
+  --input-bg:#ffffff; --input-border:rgba(15,26,22,0.12); --divider:rgba(15,26,22,0.08);
+  --shadow-sm:0 2px 8px rgba(15,23,42,.05); --shadow-md:0 8px 24px rgba(15,23,42,.07);
+  --radius-sm:10px; --radius-md:14px; --radius-lg:20px; --transition:260ms cubic-bezier(.2,.8,.2,1);
+}
+[data-theme="dark"]{
+  --bg-0:#0a0f0c; --bg-1:#0f1613; --surface:#141d19; --surface-2:#1a2420;
+  --text-0:#f1f5f3; --text-1:#e2ebe7; --text-2:#a8b8b1; --text-3:#7a8a83; --text-4:#5a6a63;
+  --emerald:#34d399; --emerald-grad:linear-gradient(135deg,#059669 0%,#10b981 100%); --emerald-soft:rgba(52,211,153,0.12);
+  --gold:#f5d76e; --gold-grad:linear-gradient(135deg,#f5d76e 0%,#d4af37 100%);
+  --blue:#60a5fa; --blue-soft:rgba(96,165,250,0.12);
+  --primary:var(--emerald); --primary-soft:var(--emerald-soft);
+  --danger:#ef4444; --warning:#f59e0b; --info:#60a5fa; --success:#10b981;
+  --input-bg:#141d19; --input-border:rgba(255,255,255,0.08); --divider:rgba(255,255,255,0.06);
+  --shadow-sm:0 2px 8px rgba(0,0,0,.3); --shadow-md:0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;color:var(--text-1);background:var(--bg-0);overflow-x:hidden;transition:background var(--transition),color var(--transition);}
+.bg-layer{position:fixed;inset:0;z-index:-2;background:linear-gradient(180deg,var(--bg-0),var(--bg-1));}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--surface);border-bottom:1px solid var(--divider);box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:60;}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text-0);font-family:'Poppins',sans-serif;font-weight:700;}
+.brand-logo{width:40px;height:40px;border-radius:12px;padding:2px;background:var(--gold-grad);display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;font-family:'Playfair Display',serif;}
+.brand-text strong{font-size:14.5px;color:var(--text-0);} .brand-text small{font-size:10px;color:var(--text-3);letter-spacing:.6px;text-transform:uppercase;}
+main{padding:24px 18px 40px;max-width:1200px;margin:0 auto;}
+.stats-row{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--divider);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-sm);}
+.stat-card h3{font-size:24px;color:var(--text-0);margin:0 0 4px;font-weight:700;}
+.stat-card p{margin:0;font-size:12px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;}
+.panel{background:var(--surface);border:1px solid var(--divider);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);overflow:hidden;}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--divider);gap:12px;flex-wrap:wrap;}
+.panel-head h2{margin:0;font-family:'Poppins',sans-serif;font-size:16px;color:var(--text-0);}
+.filters{display:flex;gap:8px;}
+.filter-btn{padding:6px 12px;border-radius:999px;border:1px solid var(--divider);background:var(--surface-2);color:var(--text-2);font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition);}
+.filter-btn:hover,.filter-btn.active{background:var(--primary-soft);color:var(--primary);border-color:var(--primary);}
+.table-wrap{overflow-x:auto;max-height:600px;overflow-y:auto;}
+table{width:100%;border-collapse:collapse;min-width:800px;}
+th,td{padding:12px 16px;text-align:left;font-size:13px;border-bottom:1px solid var(--divider);}
+th{font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;font-size:11px;background:var(--surface-2);position:sticky;top:0;z-index:1;}
+td{color:var(--text-1);}
+.status-badge{display:inline-flex;padding:4px 8px;border-radius:999px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
+.status-badge.pending{background:rgba(245,158,11,.15);color:var(--warning);}
+.status-badge.resolved{background:rgba(16,185,129,.15);color:var(--success);}
+.status-badge.reviewing{background:rgba(30,64,175,.15);color:var(--info);}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-3);}
+.empty-state i{font-size:32px;opacity:.4;margin-bottom:10px;}
+footer{padding:20px 18px;text-align:center;color:var(--text-3);font-size:12px;border-top:1px solid var(--divider);margin-top:24px;}
+footer b{color:var(--text-1);}
+.toast-host{position:fixed;top:80px;right:16px;z-index:200;display:flex;flex-direction:column;gap:10px;max-width:calc(100% - 32px);}
+.toast{min-width:260px;max-width:340px;display:flex;align-items:flex-start;gap:11px;padding:12px 14px;border-radius:13px;background:var(--surface);border:1px solid var(--divider);box-shadow:var(--shadow-md);color:var(--text-0);animation:toastIn .35s ease both;}
+.toast.out{animation:toastOut .3s ease both;}
+@keyframes toastIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:none;}}
+@keyframes toastOut{to{opacity:0;transform:translateX(30px);}}
+.toast .t-icon{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:0 0 auto;color:#fff;font-size:14px;}
+.toast.success .t-icon{background:var(--emerald-grad);} .toast.error .t-icon{background:linear-gradient(135deg,#b91c1c,#991b1b);}
+.toast .t-body{flex:1;min-width:0;} .toast .t-title{font-weight:700;font-size:13px;} .toast .t-msg{font-size:12px;color:var(--text-3);line-height:1.4;margin-top:2px;}
+@media(max-width:768px){.panel-head{flex-direction:column;align-items:flex-start;}.filters{width:100%;overflow-x:auto;padding-bottom:8px;}}
+</style>
+</head>
+<body>
+<div class="bg-layer" aria-hidden="true"></div>
+
+<header class="topbar" role="banner">
+  <a href="dashboard.html" class="brand"><div class="brand-logo">AE</div><div class="brand-text"><strong>AL-ARABI EMS</strong><small>Support Management</small></div></a>
+</header>
+
+<main>
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card"><h3 id="statTotal">0</h3><p>Total Requests</p></div>
+    <div class="stat-card"><h3 id="statPending">0</h3><p>Pending</p></div>
+    <div class="stat-card"><h3 id="statResolved">0</h3><p>Resolved</p></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Complaint & Support Requests</h2>
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="PENDING">Pending</button>
+        <button class="filter-btn" data-filter="RESOLVED">Resolved</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="complaintsTable">
+        <thead>
+          <tr><th>ID</th><th>Reg. Number</th><th>Name</th><th>Category</th><th>Status</th><th>Date</th><th>Action</th></tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="7" class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><br>Loading Requests...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<footer>© 2026 <b>AL-ARABI EDUCATION SYSTEM</b> • Complaint & Support Management</footer>
+<div class="toast-host" id="toastHost" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+  const SUPABASE_URL = 'https://qqqxxbixuzdihfnmutpp.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_oAqdfpvMyYEdeMzZuIb57w_muvQROpY';
+  let supabase; try { if(window.supabase) supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON); } catch(_){}
+
+  const $ = id => document.getElementById(id);
+  const tableBody = $('tableBody'), toastHost = $('toastHost');
+  let currentFilter = 'all';
+
+  function toast(type, title, message, dur=3000) {
+    const el = document.createElement('div'); el.className = `toast ${type}`;
+    const icons = {success:'fa-check',error:'fa-xmark',warning:'fa-triangle-exclamation'};
+    el.innerHTML = `<div class="t-icon"><i class="fa-solid ${icons[type]||icons.warning}"></i></div><div class="t-body"><div class="t-title"></div><div class="t-msg"></div></div>`;
+    el.querySelector('.t-title').textContent = title; el.querySelector('.t-msg').textContent = message;
+    toastHost.appendChild(el); setTimeout(() => { el.classList.add('out'); setTimeout(()=>el.remove(),300); }, dur);
+  }
+
+  function formatRelative(iso) {
+    if(!iso) return '—';
+    const diff = (Date.now() - new Date(iso).getTime())/1000;
+    if(diff<60) return 'Just now'; if(diff<3600) return Math.floor(diff/60)+'m ago';
+    if(diff<86400) return Math.floor(diff/3600)+'h ago'; return new Date(iso).toLocaleDateString();
+  }
+
+  function renderTable(data) {
+    if(!data || data.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="fa-regular fa-folder-open"></i><br>No requests found.</td></tr>`;
+      updateStats([]);
+      return;
+    }
+    const filtered = currentFilter === 'all' ? data : data.filter(r => r.status === currentFilter);
+    tableBody.innerHTML = filtered.map(r => `
+      <tr>
+        <td>${(r.id||'').slice(0,8)}</td>
+        <td><b>${r.reg_id||'—'}</b></td>
+        <td>${r.full_name||'—'}</td>
+        <td>${r.category||'—'}</td>
+        <td><span class="status-badge ${(r.status||'pending').toLowerCase()}">${r.status||'PENDING'}</span></td>
+        <td>${formatRelative(r.created_at)}</td>
+        <td><button class="btn-resolve" data-id="${r.id}" style="background:transparent;border:1px solid var(--divider);padding:4px 8px;border-radius:8px;cursor:pointer;color:var(--primary);font-size:12px;font-weight:600;">Mark Resolved</button></td>
+      </tr>`).join('');
+    updateStats(data);
+    document.querySelectorAll('.btn-resolve').forEach(btn => {
+      btn.addEventListener('click', async e => {
+        const id = e.target.dataset.id;
+        try {
+          await supabase.from('support_requests').update({status:'RESOLVED'}).eq('id', id);
+          toast('success','Updated','Request marked as resolved.');
+          fetchRequests();
+        } catch(err) { toast('error','Error', err.message); }
+      });
+    });
+  }
+
+  function updateStats(data) {
+    $('statTotal').textContent = data.length;
+    $('statPending').textContent = data.filter(r => r.status === 'PENDING').length;
+    $('statResolved').textContent = data.filter(r => r.status === 'RESOLVED').length;
+  }
+
+  async function fetchRequests() {
+    if(!supabase) { tableBody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="fa-solid fa-plug"></i><br>Database connection unavailable.</td></tr>`; return; }
+    try {
+      const { data, error } = await supabase.from('support_requests').select('*').order('created_at', {ascending:false});
+      if(error) throw error;
+      renderTable(data || []);
+    } catch(err) {
+      console.error(err);
+      tableBody.innerHTML = `<tr><td colspan="7" class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i><br>${err.message || 'Failed to load requests.'}</td></tr>`;
+      toast('error','Load Failed','Could not retrieve data from database.');
+    }
+  }
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      currentFilter = e.target.dataset.filter;
+      fetchRequests();
+    });
+  });
+
+  fetchRequests();
+})();
+</script>
+</body>
+</html>

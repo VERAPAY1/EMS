@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<meta name="description" content="AL-ARABI EMS - Help & Support Centre" />
+<meta name="theme-color" content="#0b1020" />
+<title>AL-ARABI EMS | Help & Support</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --bg-0:#fafaf7; --bg-1:#f5f5f0; --surface:#ffffff; --surface-2:#fbfaf6;
+  --text-0:#0f1a16; --text-1:#1f2d28; --text-2:#4a5b54; --text-3:#728079; --text-4:#9aa6a0;
+  --emerald:#065f46; --emerald-2:#059669; --emerald-soft:#d1fae5; --emerald-grad:linear-gradient(135deg,#065f46 0%,#059669 100%);
+  --gold:#b8860b; --gold-2:#d4af37; --gold-soft:#fef3c7; --gold-grad:linear-gradient(135deg,#d4af37 0%,#b8860b 100%);
+  --blue:#1e3a8a; --blue-soft:#dbeafe; --primary:var(--emerald); --primary-soft:var(--emerald-soft);
+  --danger:#b91c1c; --warning:#b45309; --info:#1e40af; --success:#059669;
+  --input-bg:#ffffff; --input-border:rgba(15,26,22,0.12); --divider:rgba(15,26,22,0.08);
+  --shadow-sm:0 2px 8px rgba(15,23,42,.05); --shadow-md:0 8px 24px rgba(15,23,42,.07); --shadow-lg:0 20px 40px rgba(15,23,42,.1);
+  --radius-sm:10px; --radius-md:14px; --radius-lg:20px; --radius-xl:28px;
+  --transition:260ms cubic-bezier(.2,.8,.2,1);
+}
+[data-theme="dark"]{
+  --bg-0:#0a0f0c; --bg-1:#0f1613; --surface:#141d19; --surface-2:#1a2420;
+  --text-0:#f1f5f3; --text-1:#e2ebe7; --text-2:#a8b8b1; --text-3:#7a8a83; --text-4:#5a6a63;
+  --emerald:#34d399; --emerald-2:#6ee7b7; --emerald-soft:rgba(52,211,153,0.12);
+  --emerald-grad:linear-gradient(135deg,#059669 0%,#10b981 100%);
+  --gold:#f5d76e; --gold-2:#ffe89a; --gold-soft:rgba(245,215,110,0.12);
+  --gold-grad:linear-gradient(135deg,#f5d76e 0%,#d4af37 100%);
+  --blue:#60a5fa; --blue-soft:rgba(96,165,250,0.12);
+  --primary:var(--emerald); --primary-soft:var(--emerald-soft);
+  --danger:#ef4444; --warning:#f59e0b; --info:#60a5fa; --success:#10b981;
+  --input-bg:#141d19; --input-border:rgba(255,255,255,0.08); --divider:rgba(255,255,255,0.06);
+  --shadow-sm:0 2px 8px rgba(0,0,0,.3); --shadow-md:0 8px 24px rgba(0,0,0,.35); --shadow-lg:0 20px 40px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;font-family:'Inter',system-ui,sans-serif;color:var(--text-1);background:var(--bg-0);overflow-x:hidden;-webkit-font-smoothing:antialiased;transition:background var(--transition),color var(--transition);}
+.bg-layer{position:fixed;inset:0;z-index:-2;background:linear-gradient(180deg,var(--bg-0) 0%,var(--bg-1) 100%);transition:background var(--transition);}
+.bg-gradient{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(900px 500px at 10% -10%,var(--primary-soft),transparent 60%),radial-gradient(700px 400px at 100% 0%,var(--gold-soft),transparent 60%);opacity:.55;transition:opacity var(--transition);}
+[data-theme="dark"] .bg-gradient{opacity:.3;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;background:var(--surface);border-bottom:1px solid var(--divider);box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:60;transition:all var(--transition);}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--text-0);font-family:'Poppins',sans-serif;font-weight:700;}
+.brand-logo{width:40px;height:40px;border-radius:12px;padding:2px;background:var(--gold-grad);box-shadow:0 2px 8px rgba(184,134,11,.25);transition:transform var(--transition);flex:0 0 auto;overflow:hidden;}
+.brand-logo img{width:100%;height:100%;border-radius:10px;object-fit:cover;}
+.brand-logo-fallback{width:100%;height:100%;border-radius:10px;background:var(--primary-grad);display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;font-family:'Playfair Display',serif;}
+.brand:hover .brand-logo{transform:scale(1.05);}
+.brand-text strong{font-size:14.5px;letter-spacing:.3px;color:var(--text-0);white-space:nowrap;}
+.brand-text small{font-size:10px;color:var(--text-3);font-weight:500;letter-spacing:.6px;text-transform:uppercase;}
+main{padding:24px 18px 40px;max-width:900px;margin:0 auto;}
+.hero-text{text-align:center;margin-bottom:28px;}
+.hero-text h1{font-family:'Playfair Display',serif;font-size:clamp(22px,4vw,28px);color:var(--text-0);margin:0 0 10px;}
+.hero-text .accent{color:var(--primary);font-style:italic;}
+.hero-text p{color:var(--text-3);font-size:14px;line-height:1.6;max-width:600px;margin:0 auto;}
+.quote-box{background:var(--surface-2);border-left:4px solid var(--gold);padding:20px;margin:24px 0;border-radius:0 var(--radius-md) var(--radius-md) 0;font-style:italic;color:var(--text-2);}
+.card{background:var(--surface);border:1px solid var(--divider);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow-md);position:relative;}
+.form-grid{display:grid;gap:18px;}
+.field{display:flex;flex-direction:column;gap:6px;}
+.field label{font-size:13px;font-weight:600;color:var(--text-1);}
+.field label .optional{color:var(--text-4);font-weight:400;font-size:12px;}
+.input-wrap{position:relative;background:var(--surface-2);border:1.5px solid var(--input-border);border-radius:var(--radius-md);transition:all var(--transition);}
+.input-wrap:focus-within{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft);}
+.input-wrap input,.input-wrap select,.input-wrap textarea{width:100%;background:transparent;border:0;outline:0;padding:14px 16px;color:var(--text-0);font-size:14px;font-family:inherit;}
+.input-wrap textarea{min-height:120px;resize:vertical;}
+.input-wrap select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23728079' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;}
+.field-msg{font-size:12px;color:var(--danger);min-height:16px;}
+.btn{width:100%;padding:16px;border:0;border-radius:var(--radius-md);background:var(--primary-grad);color:#fff;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer;transition:all var(--transition);box-shadow:0 8px 18px rgba(6,95,70,.25);margin-top:10px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 24px rgba(6,95,70,.35);}
+.btn:disabled{opacity:.7;cursor:not-allowed;transform:none;}
+.btn .spinner{width:20px;height:20px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.btn.loading .btn-text{display:none;} .btn.loading .spinner{display:block;}
+footer{padding:24px 18px;text-align:center;color:var(--text-3);font-size:12px;border-top:1px solid var(--divider);margin-top:24px;}
+footer b{color:var(--text-1);}
+.toast-host{position:fixed;top:80px;right:16px;z-index:200;display:flex;flex-direction:column;gap:10px;max-width:calc(100% - 32px);}
+.toast{min-width:260px;max-width:340px;display:flex;align-items:flex-start;gap:11px;padding:12px 14px;border-radius:13px;background:var(--surface);border:1px solid var(--divider);box-shadow:var(--shadow-lg);color:var(--text-0);animation:toastIn .35s cubic-bezier(.2,.8,.2,1) both;}
+.toast.out{animation:toastOut .3s cubic-bezier(.2,.8,.2,1) both;}
+@keyframes toastIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:none;}}
+@keyframes toastOut{to{opacity:0;transform:translateX(30px);}}
+.toast .t-icon{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;flex:0 0 auto;color:#fff;font-size:14px;}
+.toast.success .t-icon{background:var(--primary-grad);} .toast.error .t-icon{background:linear-gradient(135deg,#b91c1c,#991b1b);} .toast.info .t-icon{background:var(--blue-grad);}
+.toast .t-body{flex:1;min-width:0;} .toast .t-title{font-weight:700;font-size:13px;} .toast .t-msg{font-size:12px;color:var(--text-3);line-height:1.4;margin-top:2px;}
+@media(max-width:520px){main{padding:16px 14px 30px;}.card{padding:22px 16px;}.brand-text strong{font-size:13px;}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+</style>
+</head>
+<body>
+<div class="bg-layer" aria-hidden="true"></div>
+<div class="bg-gradient" aria-hidden="true"></div>
+
+<header class="topbar" role="banner">
+  <a href="index.html" class="brand" aria-label="AL-ARABI EMS Home">
+    <div class="brand-logo" aria-hidden="true"><img src="assets/images/logo.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid';"><div class="brand-logo-fallback" style="display:none">AE</div></div>
+    <div class="brand-text"><strong>AL-ARABI EMS</strong><small>Support Centre</small></div>
+  </a>
+</header>
+
+<main>
+  <div class="hero-text">
+    <h1>Help & <span class="accent">Support</span></h1>
+    <p>Every sincere concern deserves to be heard. Submit your request securely and our administrative team will respond promptly.</p>
+  </div>
+
+  <div class="quote-box">
+    "Every sincere concern deserves to be heard, every respectful complaint deserves careful attention, and every genuine request deserves thoughtful consideration."
+  </div>
+
+  <div class="card">
+    <form id="helpForm" class="form-grid" novalidate autocomplete="off">
+      <div class="field">
+        <label for="regNumber">Registration Number <span class="optional">(Optional - for students)</span></label>
+        <div class="input-wrap"><input id="regNumber" type="text" placeholder="e.g. AES/2025/0001 (if you are a student)" autocomplete="off" spellcheck="false"></div>
+        <div class="field-msg" id="regMsg"></div>
+      </div>
+      <div class="field">
+        <label for="fullName">Full Name *</label>
+        <div class="input-wrap"><input id="fullName" type="text" placeholder="Your official name" required></div>
+        <div class="field-msg" id="nameMsg"></div>
+      </div>
+      <div class="field">
+        <label for="email">Email Address <span class="optional">(Optional)</span></label>
+        <div class="input-wrap"><input id="email" type="email" placeholder="For follow-up correspondence"></div>
+      </div>
+      <div class="field">
+        <label for="category">Category *</label>
+        <div class="input-wrap">
+          <select id="category" required>
+            <option value="" disabled selected>Select a category</option>
+            <option value="Help Request">Help Request</option>
+            <option value="Complaint">Complaint</option>
+            <option value="Technical Problem">Technical Problem</option>
+            <option value="Password Recovery">Password Recovery</option>
+            <option value="Payment Issue">Payment Issue</option>
+            <option value="Suggestion">Suggestion</option>
+            <option value="Report a Bug">Report a Bug</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field-msg" id="catMsg"></div>
+      </div>
+      <div class="field">
+        <label for="message">Message *</label>
+        <div class="input-wrap"><textarea id="message" placeholder="Describe your request in detail..." required></textarea></div>
+        <div class="field-msg" id="msgMsg"></div>
+      </div>
+      <button type="submit" class="btn" id="submitBtn">
+        <span class="btn-text"><i class="fa-solid fa-paper-plane" style="margin-right:8px;"></i> Send Request</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+  </div>
+</main>
+
+<footer>
+  © 2026 <b>AL-ARABI EDUCATION SYSTEM</b><br>
+  Your request shall be securely recorded and delivered directly to the Administrative Support Department for review.
+</footer>
+
+<div class="toast-host" id="toastHost" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+  const SUPABASE_URL = 'https://qqqxxbixuzdihfnmutpp.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_oAqdfpvMyYEdeMzZuIb57w_muvQROpY';
+  let supabase; 
+  try { 
+    if(window.supabase) supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON); 
+  } catch(_){}
+
+  const $ = id => document.getElementById(id);
+  const form = $('helpForm'), submitBtn = $('submitBtn'), toastHost = $('toastHost');
+  const regInput = $('regNumber'), nameInput = $('fullName'), emailInput = $('email'), catInput = $('category'), msgInput = $('message');
+
+  regInput.addEventListener('input', () => regInput.value = regInput.value.toUpperCase().trim());
+
+  function toast(type, title, message, dur = 5000) {
+    const el = document.createElement('div'); 
+    el.className = `toast ${type}`;
+    const icons = {success:'fa-check',error:'fa-xmark',info:'fa-info',warning:'fa-triangle-exclamation'};
+    el.innerHTML = `<div class="t-icon"><i class="fa-solid ${icons[type]||icons.info}"></i></div><div class="t-body"><div class="t-title"></div><div class="t-msg"></div></div>`;
+    el.querySelector('.t-title').textContent = title; 
+    el.querySelector('.t-msg').textContent = message;
+    toastHost.appendChild(el); 
+    setTimeout(() => { 
+      el.classList.add('out'); 
+      setTimeout(()=>el.remove(),300); 
+    }, dur);
+  }
+
+  function setError(msgEl, msg) { msgEl.textContent = msg; }
+  function clearError(msgEl) { msgEl.textContent = ''; }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const reg = regInput.value.trim(), 
+          name = nameInput.value.trim(), 
+          email = emailInput.value.trim(), 
+          cat = catInput.value, 
+          msg = msgInput.value.trim();
+    
+    // Validation
+    if(!name) {
+      setError($('nameMsg'),'Full name is required.');
+      nameInput.focus();
+      return;
+    }
+    if(!cat) {
+      setError($('catMsg'),'Category is required.');
+      catInput.focus();
+      return;
+    }
+    if(msg.length < 10) {
+      setError($('msgMsg'),'Message must be at least 10 characters.');
+      msgInput.focus();
+      return;
+    }
+    if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast('error','Invalid Email','Please enter a valid email address.');
+      emailInput.focus();
+      return;
+    }
+
+    // Check Supabase connection
+    if(!supabase) {
+      toast('error','System Error','Cannot connect to database. Please try again later.');
+      return;
+    }
+
+    // Show loading state
+    submitBtn.disabled = true; 
+    submitBtn.classList.add('loading');
+
+    try {
+      const payload = {
+        reg_id: reg || null, // Optional - null if not provided
+        full_name: name,
+        email: email || null,
+        category: cat,
+        message: msg,
+        status: 'PENDING',
+        created_at: new Date().toISOString()
+      };
+      
+      console.log('Submitting:', payload);
+      
+      const { data, error } = await supabase.from('support_requests').insert(payload).select();
+      
+      if(error) {
+        console.error('Supabase error:', error);
+        if(error.message.includes('row-level security')) {
+          toast('error','Permission Denied','Database security policy is blocking this request. Please contact the administrator to fix RLS policies.');
+        } else if(error.code === '42P01') {
+          toast('error','Table Missing','Support requests table not found in database.');
+        } else {
+          toast('error','Submission Failed', error.message);
+        }
+        return;
+      }
+      
+      console.log('Success:', data);
+      toast('success','Request Sent','Your message has been securely delivered to the Administrative Support Department.');
+      form.reset();
+      
+    } catch(err) { 
+      console.error('Error:', err);
+      toast('error','Submission Failed', err.message || 'Please try again later.'); 
+    }
+    finally { 
+      submitBtn.disabled = false; 
+      submitBtn.classList.remove('loading'); 
+    }
+  });
+
+  window.addEventListener('error', e => console.error('Global error:', e.message));
+  window.addEventListener('unhandledrejection', e => console.error('Unhandled rejection:', e.reason));
+})();
+</script>
+</body>
+</html>

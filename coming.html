@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#064e3b">
+<title>AL-ARABI EMS | Coming Soon</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700;800&family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html,body{
+height:100%;
+overflow:hidden;
+font-family:Inter,sans-serif;
+}
+
+body{
+display:flex;
+align-items:center;
+justify-content:center;
+background:
+radial-gradient(circle at top,#0f766e22,transparent 45%),
+radial-gradient(circle at bottom,#d4af3720,transparent 45%),
+linear-gradient(135deg,#04110d,#072117,#0b3326,#02150f);
+color:white;
+position:relative;
+}
+
+/* Animated Background */
+
+body::before{
+content:"";
+position:absolute;
+width:180%;
+height:180%;
+background:
+repeating-linear-gradient(
+45deg,
+transparent,
+transparent 40px,
+rgba(255,255,255,.015) 41px,
+transparent 42px
+);
+animation:bgMove 30s linear infinite;
+}
+
+@keyframes bgMove{
+
+0%{
+transform:translate(-10%,-10%);
+}
+
+100%{
+transform:translate(10%,10%);
+}
+
+}
+
+.glow1,
+.glow2{
+
+position:absolute;
+border-radius:50%;
+filter:blur(90px);
+
+}
+
+.glow1{
+
+width:320px;
+height:320px;
+background:#10b98155;
+top:-90px;
+left:-90px;
+animation:float1 7s ease-in-out infinite;
+
+}
+
+.glow2{
+
+width:260px;
+height:260px;
+background:#d4af3755;
+bottom:-80px;
+right:-80px;
+animation:float2 9s ease-in-out infinite;
+
+}
+
+@keyframes float1{
+
+50%{
+transform:translateY(35px);
+}
+
+}
+
+@keyframes float2{
+
+50%{
+transform:translateY(-35px);
+}
+
+}
+
+.card{
+
+position:relative;
+z-index:2;
+
+width:min(92%,720px);
+
+padding:55px 40px;
+
+text-align:center;
+
+background:rgba(255,255,255,.06);
+
+backdrop-filter:blur(30px);
+
+border:1px solid rgba(255,255,255,.12);
+
+border-radius:35px;
+
+box-shadow:
+0 30px 70px rgba(0,0,0,.45),
+0 0 60px rgba(16,185,129,.18);
+
+animation:card 1.2s ease;
+
+}
+
+@keyframes card{
+
+from{
+
+opacity:0;
+transform:translateY(40px);
+
+}
+
+to{
+
+opacity:1;
+transform:none;
+
+}
+
+}
+
+.logo{
+
+width:120px;
+height:120px;
+
+margin:auto;
+
+border-radius:30px;
+
+overflow:hidden;
+
+background:linear-gradient(135deg,#d4af37,#b8860b);
+
+padding:5px;
+
+box-shadow:0 0 40px rgba(212,175,55,.45);
+
+animation:logoFloat 5s ease-in-out infinite;
+
+}
+
+.logo img{
+
+width:100%;
+height:100%;
+border-radius:26px;
+object-fit:cover;
+background:white;
+
+}
+
+@keyframes logoFloat{
+
+50%{
+transform:translateY(-10px);
+}
+
+}
+
+.school{
+
+margin-top:30px;
+
+font-family:"Cinzel",serif;
+
+font-size:17px;
+
+letter-spacing:5px;
+
+color:#e8d8a4;
+
+text-transform:uppercase;
+
+}
+
+.title{
+
+margin-top:18px;
+
+font-family:"Playfair Display",serif;
+
+font-size:clamp(40px,7vw,68px);
+
+font-weight:800;
+
+line-height:1.15;
+
+}
+
+.title span{
+
+display:block;
+
+background:linear-gradient(90deg,#f5d76e,#fff,#10b981);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+animation:shine 5s linear infinite;
+
+background-size:250%;
+
+}
+
+@keyframes shine{
+
+100%{
+
+background-position:250%;
+
+}
+
+}
+
+.line{
+
+width:130px;
+height:4px;
+
+margin:30px auto;
+
+border-radius:10px;
+
+background:linear-gradient(to right,#d4af37,#10b981);
+
+}
+
+.text{
+
+font-size:18px;
+
+line-height:1.9;
+
+color:#e9ecef;
+
+font-family:"Times New Roman",serif;
+
+font-style:italic;
+
+}
+
+.note{
+
+margin-top:35px;
+
+padding:18px 20px;
+
+border-radius:20px;
+
+background:rgba(255,255,255,.05);
+
+border:1px solid rgba(255,255,255,.08);
+
+font-family:"Times New Roman",serif;
+
+font-size:17px;
+
+line-height:1.8;
+
+color:#d8d8d8;
+
+}
+
+.loading{
+
+margin-top:40px;
+
+display:flex;
+
+justify-content:center;
+
+gap:10px;
+
+}
+
+.loading span{
+
+width:12px;
+
+height:12px;
+
+border-radius:50%;
+
+background:#10b981;
+
+animation:bounce 1s infinite;
+
+}
+
+.loading span:nth-child(2){
+
+animation-delay:.2s;
+
+}
+
+.loading span:nth-child(3){
+
+animation-delay:.4s;
+
+}
+
+@keyframes bounce{
+
+50%{
+
+transform:translateY(-12px);
+
+background:#d4af37;
+
+}
+
+}
+
+footer{
+
+margin-top:45px;
+
+font-size:13px;
+
+letter-spacing:1px;
+
+color:#bfbfbf;
+
+}
+
+@media(max-width:600px){
+
+.card{
+
+padding:40px 25px;
+
+}
+
+.title{
+
+font-size:45px;
+
+}
+
+.text{
+
+font-size:16px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="glow1"></div>
+
+<div class="glow2"></div>
+
+<div class="card">
+
+<div class="logo">
+
+<img src="assets/images/logo.png"
+onerror="this.src='logo.png'">
+
+</div>
+
+<div class="school">
+
+AL-ARABI EDUCATION MANAGEMENT SYSTEM
+
+</div>
+
+<h1 class="title">
+
+<span>COMING SOON</span>
+
+</h1>
+
+<div class="line"></div>
+
+<p class="text">
+
+Our developers are carefully crafting an elegant experience with excellence, innovation, and precision. Every feature is being refined to deliver a secure, modern, and seamless educational management platform worthy of your trust.
+
+</p>
+
+<div class="note">
+
+"We appreciate your patience and understanding. The next chapter of AL-ARABI EMS is being prepared with exceptional care and dedication. Very soon, this page will unveil powerful features designed to enrich learning, simplify administration, and inspire excellence."
+
+</div>
+
+<div class="loading">
+
+<span></span>
+
+<span></span>
+
+<span></span>
+
+</div>
+
+<footer>
+
+© 2026 AL-ARABI EDUCATION MANAGEMENT SYSTEM • All Rights Reserved
+
+</footer>
+
+</div>
+
+</body>
+</html>
