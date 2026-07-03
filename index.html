@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="description" content="AL-ARABI EMS - Enterprise Education Management System" />
+<meta name="theme-color" content="#065f46" id="themeColorMeta" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>AL-ARABI EMS | Enterprise Education Management System</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700;800&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+<style>
+/* =========================================================
+   AL-ARABI EMS — Home Page
+   Premium App-Card Grid • Mobile-First Landing
+   Emerald • Gold • Ivory • Professional Blue
+   ========================================================= */
+
+:root, [data-theme="light"]{
+  --bg-0:#fafaf7;
+  --bg-1:#f5f5f0;
+  --surface:#ffffff;
+  --surface-2:#fbfaf6;
+  --text-0:#0f1a16;
+  --text-1:#1f2d28;
+  --text-2:#4a5b54;
+  --text-3:#728079;
+  --text-4:#9aa6a0;
+  --emerald:#065f46;
+  --emerald-2:#059669;
+  --emerald-soft:#d1fae5;
+  --emerald-grad: linear-gradient(135deg,#065f46 0%, #059669 100%);
+  --gold:#b8860b;
+  --gold-2:#d4af37;
+  --gold-soft:#fef3c7;
+  --gold-grad: linear-gradient(135deg,#d4af37 0%, #b8860b 100%);
+  --blue:#1e3a8a;
+  --blue-soft:#dbeafe;
+  --primary: var(--emerald);
+  --primary-2: var(--emerald-2);
+  --primary-soft: var(--emerald-soft);
+  --accent: var(--gold);
+  --danger:#b91c1c;
+  --input-bg: #ffffff;
+  --input-border: rgba(15, 26, 22, 0.12);
+  --divider: rgba(15, 26, 22, 0.08);
+  --ring: 0 0 0 3px rgba(6, 95, 70, 0.12);
+  --shadow-xs: 0 1px 2px rgba(15,23,42,.04);
+  --shadow-sm: 0 2px 8px rgba(15,23,42,.05), 0 1px 2px rgba(15,23,42,.04);
+  --shadow-md: 0 4px 16px rgba(15,23,42,.07), 0 2px 4px rgba(15,23,42,.04);
+  --shadow-lg: 0 12px 32px rgba(15,23,42,.09), 0 4px 8px rgba(15,23,42,.04);
+  --shadow-xl: 0 24px 48px rgba(15,23,42,.12), 0 8px 16px rgba(15,23,42,.05);
+  --card-shadow: 0 8px 24px rgba(15,23,42,.06), 0 2px 6px rgba(15,23,42,.04);
+  --card-shadow-hover: 0 20px 40px rgba(15,23,42,.12), 0 8px 16px rgba(15,23,42,.06);
+  --icon-shadow: 0 10px 24px rgba(15,23,42,.15), 0 4px 8px rgba(15,23,42,.08);
+  --radius-sm:10px;
+  --radius-md:14px;
+  --radius-lg:20px;
+  --radius-xl:28px;
+  --transition: 280ms cubic-bezier(.2,.8,.2,1);
+  --transition-slow: 450ms cubic-bezier(.2,.8,.2,1);
+  --topbar-h: 68px;
+  --hero-bg: linear-gradient(180deg, #fafaf7 0%, #f5f5f0 100%);
+}
+
+[data-theme="dark"]{
+  --bg-0:#0a0f0c;
+  --bg-1:#0f1613;
+  --surface:#141d19;
+  --surface-2:#1a2420;
+  --text-0:#f1f5f3;
+  --text-1:#e2ebe7;
+  --text-2:#a8b8b1;
+  --text-3:#7a8a83;
+  --text-4:#5a6a63;
+  --emerald:#34d399;
+  --emerald-2:#6ee7b7;
+  --emerald-soft: rgba(52, 211, 153, 0.12);
+  --emerald-grad: linear-gradient(135deg,#059669 0%, #10b981 100%);
+  --gold:#f5d76e;
+  --gold-2:#ffe89a;
+  --gold-soft: rgba(245, 215, 110, 0.12);
+  --gold-grad: linear-gradient(135deg,#f5d76e 0%, #d4af37 100%);
+  --blue:#60a5fa;
+  --blue-soft: rgba(96, 165, 250, 0.12);
+  --primary: var(--emerald);
+  --primary-2: var(--emerald-2);
+  --primary-soft: var(--emerald-soft);
+  --accent: var(--gold);
+  --danger:#ef4444;
+  --input-bg: #141d19;
+  --input-border: rgba(255,255,255,0.08);
+  --divider: rgba(255,255,255,0.06);
+  --ring: 0 0 0 3px rgba(52, 211, 153, 0.18);
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.3);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.35), 0 2px 4px rgba(0,0,0,.2);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,.4), 0 4px 8px rgba(0,0,0,.25);
+  --shadow-xl: 0 24px 48px rgba(0,0,0,.5), 0 8px 16px rgba(0,0,0,.3);
+  --card-shadow: 0 8px 24px rgba(0,0,0,.3), 0 2px 6px rgba(0,0,0,.2);
+  --card-shadow-hover: 0 20px 40px rgba(0,0,0,.45), 0 8px 16px rgba(0,0,0,.3);
+  --icon-shadow: 0 10px 24px rgba(0,0,0,.4), 0 4px 8px rgba(0,0,0,.25);
+  --hero-bg: linear-gradient(180deg, #0a0f0c 0%, #0f1613 100%);
+}
+
+*{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+html{scroll-behavior:smooth; -webkit-text-size-adjust: 100%;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  color:var(--text-1);
+  background: var(--bg-0);
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  transition: background var(--transition-slow), color var(--transition-slow);
+}
+
+/* ---------- Subtle Background ---------- */
+.bg-layer{
+  position:fixed; inset:0; z-index:-2;
+  background: var(--hero-bg);
+  transition: background var(--transition-slow);
+}
+.bg-gradient{
+  position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 10% -10%, var(--primary-soft), transparent 60%),
+    radial-gradient(700px 400px at 100% 0%, var(--gold-soft), transparent 60%);
+  opacity:.55;
+  transition: opacity var(--transition-slow);
+}
+[data-theme="dark"] .bg-gradient{ opacity:.3;}
+
+/* ---------- Top Navigation ---------- */
+.topbar{
+  position:sticky; top:0; z-index:60;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 18px;
+  background: var(--surface);
+  border-bottom:1px solid var(--divider);
+  box-shadow: var(--shadow-xs);
+  transition: all var(--transition);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+.topbar-left{ display:flex; align-items:center; gap:12px; min-width:0;}
+.topbar-right{ display:flex; align-items:center; gap:8px;}
+
+.icon-btn{
+  width:42px; height:42px; border-radius:12px;
+  display:grid; place-items:center; cursor:pointer;
+  background: var(--surface-2);
+  border:1px solid var(--divider);
+  color:var(--text-2);
+  transition: all var(--transition);
+  position:relative; overflow:hidden;
+  flex:0 0 auto;
+}
+.icon-btn:hover{
+  color:var(--primary);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.icon-btn:active{ transform: scale(.94);}
+.icon-btn i{ font-size:16px;}
+
+/* Logo */
+.brand{
+  display:flex; align-items:center; gap:11px;
+  font-family:'Poppins',sans-serif; font-weight:700; color:var(--text-0);
+  text-decoration:none;
+}
+.brand-logo{
+  position:relative;
+  width:40px; height:40px; border-radius:12px;
+  padding:2px;
+  background: var(--gold-grad);
+  box-shadow: 0 2px 8px rgba(184,134,11,.25);
+  transition: transform var(--transition);
+  flex:0 0 auto;
+  overflow:hidden;
+}
+.brand-logo img{
+  width:100%; height:100%; border-radius:10px;
+  object-fit:cover; display:block;
+}
+.brand-logo-fallback{
+  width:100%; height:100%; border-radius:10px;
+  background: var(--primary-grad);
+  display:grid; place-items:center;
+  color:#fff; font-weight:800; font-size:14px;
+  font-family:'Playfair Display',serif;
+  letter-spacing:.5px;
+}
+.brand:hover .brand-logo{ transform: scale(1.05);}
+.brand-text{ display:flex; flex-direction:column; line-height:1.1; min-width:0;}
+.brand-text strong{
+  font-size:14.5px; letter-spacing:.3px; color:var(--text-0);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.brand-text small{
+  color:var(--text-3); font-weight:500; font-size:10px;
+  letter-spacing:.6px; text-transform:uppercase;
+}
+
+/* ---------- Hero ---------- */
+.hero{
+  position:relative;
+  padding: 44px 20px 36px;
+  text-align:center;
+}
+.hero-logo{
+  width:104px; height:104px; border-radius:26px;
+  margin: 0 auto 22px;
+  padding: 3px;
+  background: var(--gold-grad);
+  box-shadow: 0 16px 40px rgba(184,134,11,.22), 0 0 0 1px rgba(184,134,11,.15);
+  position:relative;
+  overflow:hidden;
+}
+.hero-logo::before{
+  content:""; position:absolute; inset:-12px; border-radius:32px;
+  background: var(--gold-grad);
+  filter: blur(28px); opacity:.28; z-index:-1;
+}
+.hero-logo img{
+  width:100%; height:100%; border-radius:22px;
+  object-fit:cover; display:block;
+}
+.hero-logo-fallback{
+  width:100%; height:100%; border-radius:22px;
+  background: var(--primary-grad);
+  display:grid; place-items:center;
+  color:#fff; font-weight:800; font-size:34px;
+  font-family:'Playfair Display',serif;
+  letter-spacing:1px;
+  position:relative;
+  overflow:hidden;
+}
+.hero-logo-fallback::after{
+  content:""; position:absolute; inset:0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.22), transparent 60%);
+  pointer-events:none;
+}
+
+.hero-greeting{
+  font-family:'Poppins',sans-serif;
+  font-size: 12.5px;
+  font-weight:600;
+  color: var(--primary);
+  margin: 0 0 8px;
+  letter-spacing: 3px;
+  text-transform:uppercase;
+}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-weight:700;
+  font-size: clamp(24px, 6vw, 34px);
+  color: var(--text-0);
+  margin: 0 0 10px;
+  line-height:1.2;
+  letter-spacing:.3px;
+}
+.hero-title .accent{
+  color: var(--primary);
+  font-style: italic;
+}
+.hero-subtitle{
+  font-size: 14px;
+  color: var(--text-3);
+  margin: 0 auto;
+  max-width: 440px;
+  line-height:1.6;
+}
+
+/* ---------- Main ---------- */
+main{
+  padding: 0 18px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-head{
+  margin-bottom: 22px;
+}
+.section-title{
+  font-family:'Poppins',sans-serif;
+  font-weight:700;
+  font-size: 17px;
+  color:var(--text-0);
+  margin: 0 0 4px;
+  letter-spacing:.2px;
+  display:flex; align-items:center; gap:10px;
+}
+.section-title i{
+  width:32px; height:32px; border-radius:10px;
+  display:grid; place-items:center;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size:13px;
+}
+.section-subtitle{
+  color:var(--text-3); font-size:13px; margin:0;
+  padding-left: 42px;
+}
+
+/* ---------- App Card Grid (MAIN FOCUS) ---------- */
+.app-grid{
+  display:grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 640px){
+  .app-grid{ grid-template-columns: repeat(3, 1fr); gap: 18px;}
+}
+@media (min-width: 900px){
+  .app-grid{ grid-template-columns: repeat(4, 1fr); gap: 20px;}
+}
+@media (min-width: 1200px){
+  .app-grid{ grid-template-columns: repeat(4, 1fr); gap: 22px;}
+}
+
+/* App Card — Thick, Premium */
+.app-card{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  padding: 22px 18px 20px;
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  border:1px solid var(--divider);
+  box-shadow: var(--card-shadow);
+  text-decoration:none;
+  color:inherit;
+  cursor:pointer;
+  transition: all var(--transition);
+  overflow:hidden;
+  min-height: 180px;
+}
+.app-card::before{
+  content:"";
+  position:absolute;
+  top:0; left:0; right:0;
+  height:3px;
+  background: var(--app-grad, var(--primary-grad));
+  opacity:.85;
+  transition: opacity var(--transition);
+}
+.app-card::after{
+  content:"";
+  position:absolute;
+  top:-50%; right:-30%;
+  width:160px; height:160px;
+  border-radius:50%;
+  background: var(--app-grad, var(--primary-grad));
+  filter: blur(50px);
+  opacity:.08;
+  transition: opacity var(--transition);
+  pointer-events:none;
+}
+.app-card:hover{
+  transform: translateY(-6px);
+  box-shadow: var(--card-shadow-hover);
+  border-color: var(--app-grad, var(--primary));
+}
+.app-card:hover::before{ opacity:1; height:4px;}
+.app-card:hover::after{ opacity:.18;}
+.app-card:active{ transform: translateY(-2px) scale(.98);}
+
+/* Card Header */
+.app-card-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom: 16px;
+  position:relative;
+  z-index:1;
+}
+
+/* Icon Container — Large, Rounded Square */
+.app-icon-box{
+  position:relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  display:grid;
+  place-items:center;
+  background: var(--app-grad, var(--primary-grad));
+  box-shadow: var(--icon-shadow);
+  transition: all var(--transition);
+  overflow:hidden;
+  flex:0 0 auto;
+}
+.app-icon-box::before{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(255,255,255,.3) 0%, rgba(255,255,255,.08) 40%, transparent 70%);
+  pointer-events:none;
+  border-radius: inherit;
+}
+.app-icon-box::after{
+  content:"";
+  position:absolute; inset:0;
+  background: radial-gradient(circle at 28% 22%, rgba(255,255,255,.22), transparent 55%);
+  pointer-events:none;
+  border-radius: inherit;
+}
+.app-card:hover .app-icon-box{
+  transform: scale(1.06) rotate(-3deg);
+  box-shadow: 0 14px 28px rgba(15,23,42,.2), 0 6px 12px rgba(15,23,42,.1);
+}
+[data-theme="dark"] .app-card:hover .app-icon-box{
+  box-shadow: 0 14px 28px rgba(0,0,0,.5), 0 6px 12px rgba(0,0,0,.3);
+}
+
+.app-icon-box i{
+  font-size: 26px;
+  color:#fff;
+  position:relative; z-index:1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.18));
+  transition: transform var(--transition);
+}
+
+/* Badge */
+.app-badge{
+  min-width: 22px; height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--danger);
+  color:#fff;
+  font-size: 11px;
+  font-weight:700;
+  display:grid; place-items:center;
+  border: 2px solid var(--surface);
+  box-shadow: 0 2px 6px rgba(185, 28, 28, 0.35);
+  font-family:'Inter',sans-serif;
+  letter-spacing:.3px;
+  animation: badgePulse 2.2s ease-in-out infinite;
+}
+@keyframes badgePulse{
+  0%,100%{ transform: scale(1);}
+  50%{ transform: scale(1.08);}
+}
+
+/* Card Body */
+.app-card-body{
+  flex:1;
+  position:relative;
+  z-index:1;
+}
+.app-card-title{
+  font-family:'Poppins',sans-serif;
+  font-weight:600;
+  font-size: 15px;
+  color:var(--text-0);
+  margin: 0 0 4px;
+  line-height:1.3;
+  letter-spacing:.1px;
+}
+.app-card-desc{
+  font-size: 12.5px;
+  color:var(--text-3);
+  line-height:1.45;
+  margin:0;
+}
+
+/* Card Footer */
+.app-card-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top:1px dashed var(--divider);
+  position:relative;
+  z-index:1;
+}
+.app-card-action{
+  font-size: 12px;
+  font-weight:600;
+  color:var(--primary);
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  transition: gap var(--transition);
+}
+.app-card:hover .app-card-action{ gap:9px;}
+.app-card-arrow{
+  width:26px; height:26px;
+  border-radius:8px;
+  display:grid; place-items:center;
+  background: var(--app-grad-soft, var(--primary-soft));
+  color: var(--app-grad, var(--primary));
+  font-size:11px;
+  transition: all var(--transition);
+}
+.app-card:hover .app-card-arrow{
+  background: var(--app-grad, var(--primary-grad));
+  color:#fff;
+  transform: translateX(2px);
+}
+
+/* Ripple */
+.ripple{
+  position:absolute; border-radius:50%;
+  background: rgba(255,255,255,.45);
+  transform: scale(0);
+  animation: rippleAnim 600ms ease-out;
+  pointer-events:none;
+  z-index:3;
+}
+@keyframes rippleAnim{
+  to{ transform: scale(4); opacity:0;}
+}
+
+/* ---------- Footer ---------- */
+footer{
+  padding: 32px 20px 40px;
+  text-align:center;
+  color:var(--text-3);
+  font-size:12px;
+  border-top:1px solid var(--divider);
+  margin-top: 20px;
+  background: var(--surface-2);
+}
+.footer-brand{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  margin-bottom: 10px;
+}
+.footer-brand .brand-logo{ width:34px; height:34px; border-radius:10px;}
+.footer-brand .brand-logo img,
+.footer-brand .brand-logo-fallback{ border-radius:8px;}
+.footer-brand .brand-logo-fallback{ font-size:11px;}
+.footer-brand b{
+  color:var(--text-0);
+  font-family:'Poppins',sans-serif;
+  font-size:13.5px;
+  letter-spacing:.2px;
+}
+.footer-tagline{
+  font-size:12.5px;
+  color:var(--text-2);
+  margin: 6px 0 14px;
+  font-weight:500;
+}
+.footer-links{
+  display:flex; flex-wrap:wrap; justify-content:center; gap:16px;
+  margin: 14px 0;
+}
+.footer-links a{
+  color:var(--text-3); text-decoration:none; font-size:12px;
+  transition: color var(--transition);
+  font-weight:500;
+}
+.footer-links a:hover{ color: var(--primary);}
+.footer-divider{
+  width:60px; height:2px;
+  margin: 14px auto;
+  background: var(--gold-grad);
+  border-radius:999px;
+  opacity:.6;
+}
+.footer-meta{
+  font-size:11px; color:var(--text-4);
+  margin-top: 10px; line-height:1.7;
+}
+.footer-meta b{ color:var(--text-2); font-weight:600;}
+
+/* ---------- Loader ---------- */
+.loader-screen{
+  position:fixed; inset:0; z-index:9999;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background: var(--bg-0);
+  transition: opacity .5s ease;
+}
+.loader-screen.hide{ opacity:0; pointer-events:none;}
+.loader-logo{
+  width:80px; height:80px; border-radius:20px;
+  padding:3px; background: var(--gold-grad);
+  box-shadow: 0 14px 36px rgba(184,134,11,.22);
+  animation: pulseLogo 1.6s ease-in-out infinite;
+  margin-bottom:16px;
+  overflow:hidden;
+}
+@keyframes pulseLogo{
+  0%,100%{ transform: scale(1);}
+  50%{ transform: scale(1.06);}
+}
+.loader-logo img{
+  width:100%; height:100%; border-radius:16px;
+  object-fit:cover; display:block;
+}
+.loader-logo-fallback{
+  width:100%; height:100%; border-radius:16px;
+  background: var(--primary-grad);
+  display:grid; place-items:center;
+  color:#fff; font-weight:800; font-size:26px;
+  font-family:'Playfair Display',serif;
+}
+.loader-text{ color:var(--text-3); font-size:12.5px; letter-spacing:.5px;}
+.loader-bar{
+  width:160px; height:3px; background: var(--divider); border-radius:999px;
+  margin-top:12px; overflow:hidden;
+}
+.loader-bar::after{
+  content:""; display:block; height:100%; width:30%;
+  background: var(--primary-grad); border-radius:999px;
+  animation: loadSlide 1.2s ease-in-out infinite;
+}
+@keyframes loadSlide{
+  0%{ transform: translateX(-100%);}
+  100%{ transform: translateX(400%);}
+}
+
+/* ---------- Toast ---------- */
+.toast-host{
+  position:fixed; top:80px; right:16px; z-index:200;
+  display:flex; flex-direction:column; gap:10px;
+  max-width: calc(100% - 32px);
+}
+.toast{
+  min-width: 260px; max-width: 340px;
+  display:flex; align-items:flex-start; gap:11px;
+  padding:12px 14px; border-radius:13px;
+  background: var(--surface); border:1px solid var(--divider);
+  box-shadow: var(--shadow-lg);
+  color:var(--text-0);
+  animation: toastIn .35s cubic-bezier(.2,.8,.2,1) both;
+}
+.toast.out{ animation: toastOut .3s cubic-bezier(.2,.8,.2,1) both;}
+@keyframes toastIn{ from{opacity:0; transform: translateX(30px);} to{opacity:1; transform:none;}}
+@keyframes toastOut{ to{opacity:0; transform: translateX(30px);}}
+.toast .t-icon{
+  width:32px; height:32px; border-radius:9px;
+  display:grid; place-items:center; flex:0 0 auto;
+  color:#fff; font-size:14px;
+}
+.toast.success .t-icon{ background: var(--primary-grad);}
+.toast.error .t-icon{ background: linear-gradient(135deg,#b91c1c,#991b1b);}
+.toast.info .t-icon{ background: linear-gradient(135deg,#1e40af,#1e3a8a);}
+.toast.warning .t-icon{ background: var(--gold-grad);}
+.toast .t-body{ flex:1; min-width:0;}
+.toast .t-title{ font-weight:700; font-size:13px;}
+.toast .t-msg{ font-size:12px; color:var(--text-3); line-height:1.4; margin-top:2px;}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.01ms !important; transition-duration: 0.01ms !important;}
+}
+:focus-visible{ outline: 2px solid var(--primary); outline-offset: 2px;}
+button, a{ -webkit-tap-highlight-color: transparent;}
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 520px){
+  .topbar{ padding: 10px 14px;}
+  .brand-text strong{ font-size:13px;}
+  .brand-text small{ font-size:9.5px;}
+  main{ padding: 0 14px 30px;}
+  .hero{ padding: 32px 16px 28px;}
+  .hero-logo{ width:92px; height:92px; border-radius:22px;}
+  .hero-logo img, .hero-logo-fallback{ border-radius:18px;}
+  .hero-logo-fallback{ font-size:30px;}
+  .hero-subtitle{ font-size:13px;}
+  .app-grid{ gap: 12px;}
+  .app-card{ padding: 18px 14px 16px; min-height: 165px;}
+  .app-icon-box{ width: 56px; height: 56px; border-radius: 16px;}
+  .app-icon-box i{ font-size: 22px;}
+  .app-card-title{ font-size: 14px;}
+  .app-card-desc{ font-size: 11.5px;}
+  .section-subtitle{ padding-left: 0; margin-top: 4px;}
+}
+</style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true"></div>
+<div class="bg-gradient" aria-hidden="true"></div>
+
+<!-- Loading Screen -->
+<div class="loader-screen" id="loaderScreen" aria-live="polite">
+  <div class="loader-logo" aria-hidden="true">
+    <img id="loaderImg" src="assets/images/logo.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid';" />
+    <div class="loader-logo-fallback" style="display:none">AE</div>
+  </div>
+  <div class="loader-text">Loading AL-ARABI EMS...</div>
+  <div class="loader-bar" aria-hidden="true"></div>
+</div>
+
+<!-- Top Navigation -->
+<header class="topbar" role="banner">
+  <div class="topbar-left">
+    <a href="index.html" class="brand" aria-label="AL-ARABI EMS Home">
+      <div class="brand-logo" aria-hidden="true">
+        <img src="assets/images/logo.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid';" />
+        <div class="brand-logo-fallback" style="display:none">AE</div>
+      </div>
+      <div class="brand-text">
+        <strong>AL-ARABI EMS</strong>
+        <small>Enterprise Portal</small>
+      </div>
+    </a>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" id="themeToggle" aria-label="Switch theme" title="Switch theme">
+      <i class="fa-solid fa-circle-half-stroke"></i>
+    </button>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero" aria-label="Welcome">
+  <div class="hero-logo" aria-hidden="true">
+    <img src="assets/images/logo.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid';" />
+    <div class="hero-logo-fallback" style="display:none">AE</div>
+  </div>
+
+  <p class="hero-greeting">Welcome</p>
+  <h1 class="hero-title">AL-ARABI <span class="accent">EMS</span></h1>
+  <p class="hero-subtitle">Enterprise Education Management System. Select an application to continue.</p>
+</section>
+
+<main>
+  <!-- Applications Section -->
+  <section aria-label="Applications">
+    <div class="section-head">
+      <h2 class="section-title">
+        <i class="fa-solid fa-grip"></i>
+        Applications
+      </h2>
+      <p class="section-subtitle">Tap any application to open</p>
+    </div>
+    <div class="app-grid" id="appGrid">
+      <!-- Rendered by JS -->
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-brand">
+    <div class="brand-logo" aria-hidden="true">
+      <img src="assets/images/logo.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='grid';" />
+      <div class="brand-logo-fallback" style="display:none">AE</div>
+    </div>
+    <b>AL-ARABI EMS</b>
+  </div>
+  <div class="footer-tagline">Enterprise Education Management System</div>
+  <div class="footer-divider" aria-hidden="true"></div>
+  <div class="footer-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="support.html">Support</a>
+    <a href="help.html">Help Center</a>
+  </div>
+  <div class="footer-meta">
+    Version <b>36.7</b> • © 2026 <b>AL-ARABI EDUCATION SYSTEM</b><br>
+    All Rights Reserved • Powered by Secure Cloud Infrastructure
+  </div>
+</footer>
+
+<!-- Toast Host -->
+<div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+/* =========================================================
+   AL-ARABI EMS — Home Page Logic
+   Vanilla JS • Theme Toggle • App Cards • Ripple Effects
+   ========================================================= */
+(() => {
+  'use strict';
+
+  /* ---------- Theme System ---------- */
+  const THEME_KEY = 'al_arabi_theme';
+  const THEME_COLORS = { light: '#065f46', dark: '#0a0f0c' };
+  const THEME_ICONS = { light: 'fa-sun', dark: 'fa-moon', auto: 'fa-circle-half-stroke' };
+
+  function getSystemTheme() {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) return 'dark';
+    return 'light';
+  }
+
+  function applyTheme(pref) {
+    const actual = pref === 'auto' ? getSystemTheme() : (pref || 'light');
+    document.documentElement.setAttribute('data-theme', actual);
+    document.documentElement.setAttribute('data-theme-pref', pref);
+
+    const meta = document.getElementById('themeColorMeta');
+    if (meta) meta.setAttribute('content', THEME_COLORS[actual] || THEME_COLORS.light);
+
+    try { localStorage.setItem(THEME_KEY, pref); } catch(_) {}
+
+    const toggleIcon = document.querySelector('#themeToggle i');
+    if (toggleIcon) toggleIcon.className = 'fa-solid ' + (THEME_ICONS[pref] || 'fa-circle-half-stroke');
+  }
+
+  function initTheme() {
+    let saved = null;
+    try { saved = localStorage.getItem(THEME_KEY); } catch(_) {}
+    if (!saved || !['light','dark','auto'].includes(saved)) saved = 'light';
+    applyTheme(saved);
+
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        const current = document.documentElement.getAttribute('data-theme-pref');
+        if (current === 'auto') applyTheme('auto');
+      });
+    }
+  }
+
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme-pref') || 'light';
+      const cycle = { light: 'dark', dark: 'auto', auto: 'light' };
+      const next = cycle[current] || 'light';
+      applyTheme(next);
+      const label = next.charAt(0).toUpperCase() + next.slice(1);
+      toast('info', 'Theme Changed', `${label} theme activated.`);
+    });
+  }
+
+  /* ---------- Applications (16 thick app cards) ---------- */
+  const APPS = [
+    {
+      title:'Student Registration',
+      desc:'Register new students into the system',
+      icon:'fa-user-plus',
+      href:'registration.html',
+      grad:'linear-gradient(135deg,#059669 0%, #10b981 100%)',
+      gradSoft:'rgba(5, 150, 105, 0.12)',
+      badge:null
+    },
+    {
+      title:'Student Login',
+      desc:'Secure access for registered students',
+      icon:'fa-user-graduate',
+      href:'login.html',
+      grad:'linear-gradient(135deg,#1e40af 0%, #3b82f6 100%)',
+      gradSoft:'rgba(30, 64, 175, 0.12)',
+      badge:null
+    },
+    {
+      title:'Parent Portal',
+      desc:'Monitor your child\'s progress',
+      icon:'fa-people-roof',
+      href:'parents.html',
+      grad:'linear-gradient(135deg,#7c3aed 0%, #a855f7 100%)',
+      gradSoft:'rgba(124, 58, 237, 0.12)',
+      badge:null
+    },
+    {
+      title:'Teacher Portal',
+      desc:'Academic staff management',
+      icon:'fa-chalkboard-user',
+      href:'teachers.html',
+      grad:'linear-gradient(135deg,#0d9488 0%, #14b8a6 100%)',
+      gradSoft:'rgba(13, 148, 136, 0.12)',
+      badge:null
+    },
+    {
+      title:'Admin Dashboard',
+      desc:'System administration & control',
+      icon:'fa-user-shield',
+      href:'dashboard.html',
+      grad:'linear-gradient(135deg,#0f172a 0%, #334155 100%)',
+      gradSoft:'rgba(15, 23, 42, 0.12)',
+      badge:null
+    },
+    {
+      title:'Attendance',
+      desc:'Track daily attendance records',
+      icon:'fa-calendar-check',
+      href:'attendance.html',
+      grad:'linear-gradient(135deg,#16a34a 0%, #22c55e 100%)',
+      gradSoft:'rgba(22, 163, 74, 0.12)',
+      badge:null
+    },
+    {
+      title:'CBT Examination',
+      desc:'Computer-based test portal',
+      icon:'fa-laptop-code',
+      href:'cbt.html',
+      grad:'linear-gradient(135deg,#0891b2 0%, #06b6d4 100%)',
+      gradSoft:'rgba(8, 145, 178, 0.12)',
+      badge:null
+    },
+    {
+      title:'CBT Administration',
+      desc:'Manage exams & questions',
+      icon:'fa-file-circle-check',
+      href:'cbt-admin.html',
+      grad:'linear-gradient(135deg,#4338ca 0%, #6366f1 100%)',
+      gradSoft:'rgba(67, 56, 202, 0.12)',
+      badge:null
+    },
+    {
+      title:'Results',
+      desc:'View academic results & reports',
+      icon:'fa-square-poll-vertical',
+      href:'results.html',
+      grad:'linear-gradient(135deg,#9333ea 0%, #c026d3 100%)',
+      gradSoft:'rgba(147, 51, 234, 0.12)',
+      badge:null
+    },
+    {
+      title:'Course Registration',
+      desc:'Register for courses & subjects',
+      icon:'fa-book',
+      href:'courses.html',
+      grad:'linear-gradient(135deg,#b45309 0%, #d97706 100%)',
+      gradSoft:'rgba(180, 83, 9, 0.12)',
+      badge:null
+    },
+    {
+      title:'Library',
+      desc:'Digital library & resources',
+      icon:'fa-book-open-reader',
+      href:'library.html',
+      grad:'linear-gradient(135deg,#be185d 0%, #ec4899 100%)',
+      gradSoft:'rgba(190, 24, 93, 0.12)',
+      badge:null
+    },
+    {
+      title:'Finance',
+      desc:'Fees, payments & transactions',
+      icon:'fa-money-bill-wave',
+      href:'finance.html',
+      grad:'linear-gradient(135deg,#047857 0%, #059669 100%)',
+      gradSoft:'rgba(4, 120, 87, 0.12)',
+      badge:null
+    },
+    {
+      title:'Timetable',
+      desc:'Class & exam schedules',
+      icon:'fa-calendar-days',
+      href:'timetable.html',
+      grad:'linear-gradient(135deg,#c2410c 0%, #ea580c 100%)',
+      gradSoft:'rgba(194, 65, 12, 0.12)',
+      badge:null
+    },
+    {
+      title:'Notifications',
+      desc:'School updates & alerts',
+      icon:'fa-bell',
+      href:'notifications.html',
+      grad:'linear-gradient(135deg,#b91c1c 0%, #ef4444 100%)',
+      gradSoft:'rgba(185, 28, 28, 0.12)',
+      badge:3
+    },
+    {
+      title:'Profile',
+      desc:'Your personal information',
+      icon:'fa-id-card',
+      href:'profile.html',
+      grad:'linear-gradient(135deg,#0284c7 0%, #0ea5e9 100%)',
+      gradSoft:'rgba(2, 132, 199, 0.12)',
+      badge:null
+    },
+    {
+      title:'Settings',
+      desc:'Preferences & configuration',
+      icon:'fa-gear',
+      href:'settings.html',
+      grad:'linear-gradient(135deg,#475569 0%, #64748b 100%)',
+      gradSoft:'rgba(71, 85, 105, 0.12)',
+      badge:null
+    }
+  ];
+
+  function renderApps() {
+    const grid = document.getElementById('appGrid');
+    if (!grid) return;
+    grid.innerHTML = APPS.map((app, i) => {
+      const badgeHtml = app.badge
+        ? `<span class="app-badge" aria-label="${app.badge} notifications">${app.badge > 9 ? '9+' : app.badge}</span>`
+        : '';
+      return `
+        <a class="app-card" href="${app.href}"
+           style="--app-grad:${app.grad}; --app-grad-soft:${app.gradSoft}; animation: fadeUp .5s ${i*40}ms both ease-out"
+           aria-label="${app.title}">
+          <div class="app-card-head">
+            <div class="app-icon-box">
+              <i class="fa-solid ${app.icon}" aria-hidden="true"></i>
+            </div>
+            ${badgeHtml}
+          </div>
+          <div class="app-card-body">
+            <h3 class="app-card-title">${app.title}</h3>
+            <p class="app-card-desc">${app.desc}</p>
+          </div>
+          <div class="app-card-foot">
+            <span class="app-card-action">Open <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+            <span class="app-card-arrow" aria-hidden="true">
+              <i class="fa-solid fa-chevron-right"></i>
+            </span>
+          </div>
+        </a>`;
+    }).join('');
+  }
+
+  /* ---------- Ripple Effect ---------- */
+  function attachRipple(el) {
+    el.addEventListener('click', function(e) {
+      const rect = this.getBoundingClientRect();
+      const ripple = document.createElement('span');
+      const size = Math.max(rect.width, rect.height) * 1.5;
+      ripple.className = 'ripple';
+      ripple.style.width = ripple.style.height = size + 'px';
+      ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+      ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+      this.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 650);
+    });
+  }
+
+  function bindRipples() {
+    document.querySelectorAll('.app-card').forEach(attachRipple);
+  }
+
+  /* ---------- Toast ---------- */
+  const toastHost = document.getElementById('toastHost');
+  const TOAST_ICONS = { success:'fa-check', error:'fa-xmark', info:'fa-info', warning:'fa-triangle-exclamation' };
+  function toast(type, title, message, duration = 3000) {
+    if (!toastHost) return;
+    const el = document.createElement('div');
+    el.className = `toast ${type}`;
+    el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    el.innerHTML = `
+      <div class="t-icon"><i class="fa-solid ${TOAST_ICONS[type] || TOAST_ICONS.info}"></i></div>
+      <div class="t-body">
+        <div class="t-title"></div>
+        <div class="t-msg"></div>
+      </div>`;
+    el.querySelector('.t-title').textContent = title;
+    el.querySelector('.t-msg').textContent = message;
+    toastHost.appendChild(el);
+    setTimeout(() => {
+      el.classList.add('out');
+      setTimeout(() => el.remove(), 320);
+    }, duration);
+  }
+
+  /* ---------- Loader ---------- */
+  function hideLoader() {
+    const loader = document.getElementById('loaderScreen');
+    if (loader) {
+      loader.classList.add('hide');
+      setTimeout(() => loader.remove(), 600);
+    }
+  }
+
+  /* ---------- Fade-up keyframe ---------- */
+  const style = document.createElement('style');
+  style.textContent = `@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}`;
+  document.head.appendChild(style);
+
+  /* ---------- Init ---------- */
+  function init() {
+    initTheme();
+    renderApps();
+    bindRipples();
+    setTimeout(hideLoader, 600);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  window.addEventListener('error', (e) => console.error('Global error:', e.message));
+  window.addEventListener('unhandledrejection', (e) => console.error('Unhandled rejection:', e.reason));
+
+})();
+</script>
+</body>
+</html>
