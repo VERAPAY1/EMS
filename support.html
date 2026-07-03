@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#064e3b">
+
+<title>AL-ARABI EMS | Help & Support</title>
+
+<link rel="icon" href="logo.png">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html{
+overflow-x:hidden;
+touch-action:manipulation;
+}
+
+body{
+font-family:"Times New Roman",serif;
+background:linear-gradient(135deg,#022c22,#064e3b,#0f766e);
+color:#ffffff;
+overflow-x:hidden;
+user-select:none;
+}
+
+body::-webkit-scrollbar{
+display:none;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:25px;
+}
+
+.logo{
+display:block;
+width:110px;
+height:110px;
+margin:20px auto;
+border-radius:50%;
+background:#fff;
+padding:8px;
+box-shadow:0 0 35px rgba(255,255,255,.25);
+object-fit:cover;
+animation:pulse 3s infinite;
+}
+
+@keyframes pulse{
+50%{
+transform:scale(1.05);
+}
+}
+
+.card{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,.15);
+border-radius:25px;
+padding:35px;
+box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+
+h1{
+text-align:center;
+font-size:38px;
+margin-bottom:10px;
+}
+
+.subtitle{
+text-align:center;
+font-size:18px;
+opacity:.9;
+margin-bottom:35px;
+}
+
+.section{
+margin-bottom:30px;
+}
+
+.section h2{
+font-size:24px;
+margin-bottom:12px;
+color:#facc15;
+}
+
+.section p{
+font-size:18px;
+line-height:1.9;
+text-align:justify;
+}
+
+.box{
+background:rgba(255,255,255,.08);
+padding:18px;
+border-radius:18px;
+margin-top:15px;
+border-left:5px solid #22c55e;
+}
+
+ul{
+padding-left:22px;
+line-height:2;
+font-size:18px;
+}
+
+.footer{
+margin-top:40px;
+text-align:center;
+font-size:15px;
+opacity:.85;
+line-height:1.8;
+}
+
+.support{
+margin-top:30px;
+background:rgba(250,204,21,.12);
+padding:20px;
+border-radius:18px;
+border-left:5px solid #facc15;
+}
+
+.support strong{
+display:block;
+font-size:22px;
+margin-bottom:10px;
+}
+
+@media(max-width:768px){
+
+h1{
+font-size:30px;
+}
+
+.card{
+padding:22px;
+}
+
+.section p,
+ul{
+font-size:17px;
+}
+
+}
+
+</style>
+
+<script>
+
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+document.addEventListener("keydown",function(e){
+
+if(
+e.key==="F12"||
+(e.ctrlKey&&e.shiftKey&&["I","J","C"].includes(e.key.toUpperCase()))||
+(e.ctrlKey&&["U","S","P","+"].includes(e.key.toUpperCase()))
+){
+e.preventDefault();
+}
+
+});
+
+let lastTouchEnd=0;
+
+document.addEventListener("touchend",function(e){
+let now=(new Date()).getTime();
+if(now-lastTouchEnd<=300){
+e.preventDefault();
+}
+lastTouchEnd=now;
+},{passive:false});
+
+document.addEventListener("gesturestart",e=>e.preventDefault());
+document.addEventListener("gesturechange",e=>e.preventDefault());
+document.addEventListener("gestureend",e=>e.preventDefault());
+
+</script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<img src="logo.png" class="logo">
+
+<div class="card">
+
+<h1>Help & Support</h1>
+
+<p class="subtitle">
+Welcome to the AL-ARABI Education Management System Help Centre
+</p>
+
+<div class="section">
+
+<h2>Welcome</h2>
+
+<p>
+The Help & Support Centre provides guidance for using the AL-ARABI Education Management System. Whether you are an administrator, teacher, student, parent, or examination candidate, this page is designed to help you understand the platform and quickly resolve common issues.
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>Frequently Asked Questions</h2>
+
+<div class="box">
+<strong>How do I log in?</strong>
+<p>Use the email address and password provided by your institution or system administrator.</p>
+</div>
+
+<div class="box">
+<strong>I forgot my password.</strong>
+<p>Use the "Forgot Password" option on the login page to securely reset your password.</p>
+</div>
+
+<div class="box">
+<strong>I cannot access my examination.</strong>
+<p>Confirm that your examination link, access code, and scheduled examination time are correct.</p>
+</div>
+
+<div class="box">
+<strong>My results are unavailable.</strong>
+<p>Results may remain hidden until they are officially released by the examination administrator.</p>
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>System Features</h2>
+
+<ul>
+<li>Student Management</li>
+<li>Teacher Management</li>
+<li>Attendance Monitoring</li>
+<li>Computer Based Testing (CBT)</li>
+<li>Finance Management</li>
+<li>Library Management</li>
+<li>Report Generation</li>
+<li>Secure Authentication</li>
+<li>Real-Time Dashboard</li>
+<li>Institution Administration</li>
+</ul>
+
+</div>
+
+<div class="section">
+
+<h2>Technical Support</h2>
+
+<p>
+If you experience technical issues such as login problems, examination errors, missing information, or unexpected system behaviour, please contact your institution's administrator. System administrators can review logs, verify permissions, and resolve technical issues securely.
+</p>
+
+</div>
+
+<div class="support">
+
+<strong>Need More Assistance?</strong>
+
+<p>
+Our support team is committed to delivering reliable assistance for all users of AL-ARABI EMS. We continuously improve system performance, security, and user experience to ensure dependable educational services.
+</p>
+
+</div>
+
+<div class="footer">
+
+<strong>AL-ARABI Education Management System</strong>
+
+<br><br>
+
+Empowering Digital Education Through Secure, Reliable, and Innovative Technology.
+
+<br><br>
+
+© 2026 AL-ARABI EMS. All Rights Reserved.
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

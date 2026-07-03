@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#064e3b">
+
+<title>AL-ARABI EMS | Terms of Service</title>
+
+<link rel="icon" href="logo.png">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html{
+overflow-x:hidden;
+touch-action:manipulation;
+}
+
+body{
+font-family:"Times New Roman",serif;
+background:linear-gradient(135deg,#022c22,#064e3b,#0f766e);
+color:#fff;
+overflow-x:hidden;
+user-select:none;
+}
+
+body::-webkit-scrollbar{
+display:none;
+}
+
+.container{
+max-width:950px;
+margin:auto;
+padding:30px 20px 80px;
+}
+
+.logo{
+display:block;
+width:110px;
+height:110px;
+margin:20px auto;
+border-radius:50%;
+background:#fff;
+padding:8px;
+object-fit:cover;
+box-shadow:0 0 35px rgba(255,255,255,.25);
+animation:pulse 3s infinite;
+}
+
+@keyframes pulse{
+50%{transform:scale(1.05);}
+}
+
+.card{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,.15);
+border-radius:25px;
+padding:35px;
+box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+
+h1{
+text-align:center;
+font-size:40px;
+margin-bottom:10px;
+}
+
+.subtitle{
+text-align:center;
+font-size:18px;
+margin-bottom:35px;
+opacity:.9;
+}
+
+.section{
+margin-bottom:30px;
+}
+
+.section h2{
+font-size:25px;
+color:#facc15;
+margin-bottom:12px;
+}
+
+.section p{
+font-size:18px;
+line-height:1.9;
+text-align:justify;
+}
+
+.notice{
+background:rgba(250,204,21,.12);
+border-left:5px solid #facc15;
+padding:18px;
+border-radius:15px;
+margin-bottom:30px;
+}
+
+.rule{
+background:rgba(255,255,255,.08);
+border-left:5px solid #22c55e;
+padding:18px;
+border-radius:15px;
+margin-top:18px;
+}
+
+.rule strong{
+font-size:21px;
+display:block;
+margin-bottom:8px;
+}
+
+.footer{
+margin-top:45px;
+text-align:center;
+line-height:1.9;
+font-size:15px;
+opacity:.85;
+}
+
+@media(max-width:768px){
+
+.card{
+padding:22px;
+}
+
+h1{
+font-size:30px;
+}
+
+.section p{
+font-size:17px;
+}
+
+}
+
+</style>
+
+<script>
+
+document.addEventListener("contextmenu",e=>e.preventDefault());
+
+document.addEventListener("keydown",function(e){
+
+if(
+e.key==="F12"||
+(e.ctrlKey&&e.shiftKey&&["I","J","C"].includes(e.key.toUpperCase()))||
+(e.ctrlKey&&["U","S","P","+"].includes(e.key.toUpperCase()))
+){
+e.preventDefault();
+}
+
+});
+
+let lastTouchEnd=0;
+
+document.addEventListener("touchend",function(e){
+let now=(new Date()).getTime();
+if(now-lastTouchEnd<=300){
+e.preventDefault();
+}
+lastTouchEnd=now;
+},{passive:false});
+
+document.addEventListener("gesturestart",e=>e.preventDefault());
+document.addEventListener("gesturechange",e=>e.preventDefault());
+document.addEventListener("gestureend",e=>e.preventDefault());
+
+</script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<img src="assets/images/logo.png" class="logo">
+
+<div class="card">
+
+<h1>Terms of Service</h1>
+
+<p class="subtitle">
+AL-ARABI Education Management System (EMS)
+</p>
+
+<div class="notice">
+
+By accessing or using AL-ARABI EMS, you agree to comply with these Terms of Service. These terms are designed to protect every user, maintain system integrity, and ensure a safe, secure, and professional educational environment.
+
+</div>
+
+<div class="section">
+
+<h2>1. Acceptance of Terms</h2>
+
+<p>
+Every user is responsible for complying with these Terms of Service. If you do not agree with these terms, you should not access or use any part of the AL-ARABI EMS platform.
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>2. User Responsibilities</h2>
+
+<p>
+Every account is personal. Users are responsible for protecting their login credentials, using the system honestly, respecting institutional policies, and ensuring that all information provided is accurate and lawful.
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>3. Role-Based Access</h2>
+
+<div class="rule">
+
+<strong>Super Administrator</strong>
+
+Only the Super Administrator has unrestricted control over the entire platform, including system configuration, administrator management, institutional settings, security controls, and platform maintenance.
+
+</div>
+
+<div class="rule">
+
+<strong>Administrator</strong>
+
+Administrators may only perform duties assigned by the institution. Administrators must not alter system components outside their authorized permissions.
+
+</div>
+
+<div class="rule">
+
+<strong>Teacher</strong>
+
+Teachers may manage only educational content assigned to them, including attendance, examinations, grading, and student academic activities. Teachers must not access administrative or system configuration areas unless explicitly authorized.
+
+</div>
+
+<div class="rule">
+
+<strong>Student</strong>
+
+Students may access only their own educational records, attendance, examinations, assignments, results, and authorized resources. Students must not attempt to access teacher, administrator, or system management sections.
+
+</div>
+
+<div class="rule">
+
+<strong>Parents / Guardians</strong>
+
+Parents or guardians may only access information specifically made available for their linked student accounts. Accessing or attempting to access other users' information is prohibited.
+
+</div>
+
+<div class="rule">
+
+<strong>Candidates</strong>
+
+Candidates participating in online examinations must follow examination rules, complete assessments honestly, and avoid any form of cheating or unauthorized assistance.
+
+</div>
+
+</div>
+
+<div class="section">
+
+<h2>4. Unauthorized Access</h2>
+
+<p>
+Attempting to access restricted pages, administrative dashboards, confidential records, databases, server resources, examination answers, or other protected areas without authorization is strictly prohibited. Such activities may result in immediate suspension or permanent termination of access and may be reported where required by applicable law.
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>5. Examination Integrity</h2>
+
+<p>
+Users must not share examination materials, answers, access credentials, examination links intended to be private, or engage in any activity designed to compromise the fairness or integrity of assessments.
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>6. Data Protection</h2>
+
+<p>
+All information stored within AL-ARABI EMS is protected using appropriate security measures. Users must not copy, distribute, alter, or misuse confidential institutional information without proper authorization.
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>7. Prohibited Activities</h2>
+
+<p>
+Users must not upload malicious software, attempt to bypass security mechanisms, interfere with platform operations, impersonate another user, modify system files, or use automated tools to disrupt normal service.
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>8. Suspension and Termination</h2>
+
+<p>
+AL-ARABI EMS reserves the right to suspend, restrict, or permanently terminate accounts that violate these Terms of Service or compromise the security, integrity, or proper functioning of the platform.
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>9. Changes to the Terms</h2>
+
+<p>
+These Terms of Service may be updated periodically to reflect improvements, legal requirements, security enhancements, or operational changes. Continued use of the platform constitutes acceptance of any updated terms.
+</p>
+
+</div>
+
+<div class="section">
+
+<h2>10. Final Agreement</h2>
+
+<p>
+By using AL-ARABI EMS, every user acknowledges that they have read, understood, and agreed to comply with these Terms of Service. Respecting user roles, protecting confidential information, and using the platform responsibly helps maintain a secure and reliable educational environment for everyone.
+</p>
+
+</div>
+
+<div class="footer">
+
+<strong>AL-ARABI Education Management System</strong>
+
+<br><br>
+
+Integrity • Security • Responsibility • Educational Excellence
+
+<br><br>
+
+© 2026 AL-ARABI EMS. All Rights Reserved.
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
