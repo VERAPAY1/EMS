@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<meta name="description" content="AL-ARABI EMS - Secure Student Login Portal" />
+<meta name="theme-color" content="#070915" />
+<title>AL-ARABI EMS | Student Login</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+
+<style>
+:root {
+    --bg-primary: #070915;
+    --bg-secondary: #0d1128;
+    --glass-bg: rgba(15, 18, 45, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-secondary: #a0aec0;
+    --text-muted: #64748b;
+    --accent-purple: #8b5cf6;
+    --accent-blue: #3b82f6;
+    --accent-cyan: #06b6d4;
+    --success: #10b981;
+    --danger: #ef4444;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    position: relative;
+}
+
+.bg-container {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(ellipse at bottom, #151a35 0%, #070915 100%);
+}
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.35;
+    animation: floatOrb 20s infinite ease-in-out;
+}
+.orb-1 { width: 500px; height: 500px; background: var(--accent-purple); top: -150px; left: -150px; }
+.orb-2 { width: 400px; height: 400px; background: var(--accent-blue); bottom: -100px; right: -100px; animation-delay: -7s; }
+@keyframes floatOrb {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(40px, -40px) scale(1.05); }
+    66% { transform: translate(-30px, 30px) scale(0.95); }
+}
+
+.login-container {
+    width: 100%;
+    max-width: 480px;
+    padding: 20px;
+    animation: fadeIn 0.6s ease;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+}
+
+.brand-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+.brand-header h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+}
+.brand-header p {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-purple);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+.input-wrap {
+    position: relative;
+}
+.input-wrap input {
+    width: 100%;
+    padding: 16px 16px 16px 48px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    color: #fff;
+    font-size: 15px;
+    transition: all var(--transition);
+}
+.input-wrap input:focus {
+    outline: none;
+    border-color: var(--accent-purple);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+}
+.input-wrap .icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 16px;
+}
+.toggle-pwd {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+.toggle-pwd:hover { color: #fff; }
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+.checkbox-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+.checkbox-wrap input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-purple);
+    cursor: pointer;
+}
+.checkbox-wrap span {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+.forgot-link {
+    font-size: 13px;
+    color: var(--accent-cyan);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+.forgot-link:hover { color: var(--accent-purple); }
+
+.submit-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition);
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(139, 92, 246, 0.5);
+}
+.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+.btn-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.submit-btn.loading .btn-text { display: none; }
+.submit-btn.loading .btn-spinner { display: block; }
+
+.footer-links {
+    text-align: center;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--glass-border);
+}
+.footer-links p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+.footer-links a {
+    color: var(--accent-purple);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+.footer-links a:hover { color: var(--accent-cyan); }
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.toast {
+    min-width: 300px;
+    padding: 16px 20px;
+    background: rgba(15, 18, 45, 0.95);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    animation: slideIn 0.4s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+.toast.error { border-left: 4px solid var(--danger); }
+.toast.success { border-left: 4px solid var(--success); }
+.toast.warning { border-left: 4px solid #f59e0b; }
+.toast-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.toast-content { flex: 1; }
+.toast-title { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+.toast-msg { font-size: 13px; color: var(--text-secondary); }
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+}
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 520px) {
+    .glass-card { padding: 28px 20px; }
+    .brand-header h1 { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-container">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+</div>
+
+<div class="login-container">
+    <div class="glass-card">
+        <div class="brand-header">
+            <h1>Welcome Back</h1>
+            <p>Access your academic records, results, and campus services securely. Your enterprise-grade student portal awaits.</p>
+        </div>
+
+        <form id="loginForm" novalidate autocomplete="on">
+            <div class="form-group">
+                <label for="regNumber">Registration Number</label>
+                <div class="input-wrap">
+                    <i class="icon fa-solid fa-id-card"></i>
+                    <input type="text" id="regNumber" placeholder="e.g. REG-TC6UUNJ89" required autocomplete="username" spellcheck="false" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <i class="icon fa-solid fa-lock"></i>
+                    <input type="password" id="password" placeholder="Enter your password" required autocomplete="current-password" />
+                    <button type="button" class="toggle-pwd" aria-label="Toggle password visibility">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-options">
+                <label class="checkbox-wrap">
+                    <input type="checkbox" id="rememberMe" />
+                    <span>Remember me</span>
+                </label>
+                <a href="forgot-password.html" class="forgot-link">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span class="btn-text">Secure Login</span>
+                <div class="btn-spinner"></div>
+            </button>
+        </form>
+
+        <div class="footer-links">
+            <p>Don't have an account? <a href="signup.html">Create Account</a></p>
+            <p><a href="index.html">← Back to Home</a></p>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+(() => {
+    'use strict';
+
+    // Configuration
+    const SUPABASE_URL = 'https://qqqxxbixuzdihfnmutpp.supabase.co';
+    const SUPABASE_ANON = 'sb_publishable_oAqdfpvMyYEdeMzZuIb57w_muvQROpY';
+    const REDIRECT_URL = 'student-dashboard.html';
+    const SESSION_KEY = 'al_arabi_student_session';
+    const MAX_FAILED_ATTEMPTS = 5;
+
+    // Initialize Supabase
+    let supabase;
+    try {
+        if (window.supabase) {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+        }
+    } catch (err) {
+        console.error('Supabase init failed:', err);
+    }
+
+    // Check existing session
+    function checkExistingSession() {
+        try {
+            const sessionData = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
+            if (sessionData) {
+                const session = JSON.parse(sessionData);
+                if (session.expires_at && Date.now() < session.expires_at) {
+                    window.location.href = REDIRECT_URL;
+                    return true;
+                } else {
+                    localStorage.removeItem(SESSION_KEY);
+                    sessionStorage.removeItem(SESSION_KEY);
+                }
+            }
+        } catch (err) {
+            console.error('Session check failed:', err);
+        }
+        return false;
+    }
+
+    // Check on load
+    if (checkExistingSession()) {
+        // Already logged in, will redirect
+    }
+
+    // DOM Elements
+    const form = document.getElementById('loginForm');
+    const regInput = document.getElementById('regNumber');
+    const pwdInput = document.getElementById('password');
+    const rememberMe = document.getElementById('rememberMe');
+    const submitBtn = document.getElementById('submitBtn');
+    const toastContainer = document.getElementById('toastContainer');
+    const togglePwdBtn = document.querySelector('.toggle-pwd');
+
+    // Toggle password visibility
+    togglePwdBtn.addEventListener('click', function() {
+        const icon = this.querySelector('i');
+        if (pwdInput.type === 'password') {
+            pwdInput.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            pwdInput.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    });
+
+    // Auto uppercase registration number
+    regInput.addEventListener('input', () => {
+        regInput.value = regInput.value.toUpperCase().trim();
+    });
+
+    // Toast notification
+    function showToast(type, title, message, duration = 5000) {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        const icons = { success: 'fa-check', error: 'fa-xmark', warning: 'fa-triangle-exclamation' };
+        toast.innerHTML = `
+            <div class="toast-icon"><i class="fa-solid ${icons[type] || icons.warning}"></i></div>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-msg">${message}</div>
+            </div>
+            <button class="toast-close" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+        `;
+        toast.querySelector('.toast-close').addEventListener('click', () => dismissToast(toast));
+        toastContainer.appendChild(toast);
+        setTimeout(() => dismissToast(toast), duration);
+    }
+
+    function dismissToast(toast) {
+        toast.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+    }
+
+    // Password verification
+    async function verifyPassword(inputPassword, storedHash) {
+        // Try bcrypt first if available and hash looks like bcrypt
+        if (window.bcrypt && storedHash && storedHash.startsWith('$2')) {
+            try {
+                return await bcrypt.compare(inputPassword, storedHash);
+            } catch (err) {
+                console.warn('Bcrypt failed, trying SHA-256 fallback');
+            }
+        }
+        
+        // Fallback to SHA-256
+        const encoder = new TextEncoder();
+        const data = encoder.encode(inputPassword);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        
+        return hashHex === storedHash;
+    }
+
+    // Create session
+    function createSession(account, student) {
+        const sessionData = {
+            account_id: account.id,
+            student_id: account.student_id,
+            reg_id: account.reg_id,
+            full_name: account.full_name || (student ? student.full_name : 'Student'),
+            login_time: Date.now(),
+            expires_at: Date.now() + (8 * 60 * 60 * 1000) // 8 hours
+        };
+        
+        const storage = rememberMe.checked ? localStorage : sessionStorage;
+        storage.setItem(SESSION_KEY, JSON.stringify(sessionData));
+    }
+
+    // Form submission
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const regId = regInput.value.trim();
+        const password = pwdInput.value;
+
+        if (!regId || regId.length < 3) {
+            showToast('error', 'Invalid Input', 'Please enter your Registration Number');
+            regInput.focus();
+            return;
+        }
+
+        if (!password || password.length < 4) {
+            showToast('error', 'Invalid Input', 'Please enter your password');
+            pwdInput.focus();
+            return;
+        }
+
+        if (!supabase) {
+            showToast('error', 'System Error', 'Cannot connect to database. Please try again later.');
+            return;
+        }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+
+        try {
+            // Step 1: Find account by registration number
+            const { data: account, error: accountError } = await supabase
+                .from('student_accounts')
+                .select('*')
+                .eq('reg_id', regId)
+                .maybeSingle();
+
+            if (accountError) {
+                throw new Error('Database query failed: ' + accountError.message);
+            }
+
+            if (!account) {
+                showToast('error', 'Account Not Found', 'No account found with this Registration Number. Please register first.');
+                resetButton();
+                return;
+            }
+
+            // Step 2: Check if account is locked
+            if (account.locked) {
+                showToast('error', 'Account Locked', 'Your account has been locked. Please contact the administrator.');
+                resetButton();
+                return;
+            }
+
+            // Step 3: Check account status
+            if (account.account_status && account.account_status !== 'ACTIVE') {
+                showToast('error', 'Account Inactive', 'Your account is currently inactive. Please contact the administrator.');
+                resetButton();
+                return;
+            }
+
+            // Step 4: Verify password
+            const passwordValid = await verifyPassword(password, account.password_hash);
+
+            if (!passwordValid) {
+                // Increment failed attempts
+                const newFailedAttempts = (account.failed_attempts || 0) + 1;
+                const shouldLock = newFailedAttempts >= MAX_FAILED_ATTEMPTS;
+
+                await supabase
+                    .from('student_accounts')
+                    .update({ 
+                        failed_attempts: newFailedAttempts,
+                        locked: shouldLock
+                    })
+                    .eq('id', account.id);
+
+                if (shouldLock) {
+                    showToast('error', 'Account Locked', 'Too many failed attempts. Your account has been locked. Please contact the administrator.');
+                } else {
+                    const remaining = MAX_FAILED_ATTEMPTS - newFailedAttempts;
+                    showToast('error', 'Invalid Password', `Incorrect password. ${remaining} attempt${remaining !== 1 ? 's' : ''} remaining.`);
+                }
+                resetButton();
+                return;
+            }
+
+            // Step 5: Successful login - update last login and reset failed attempts
+            const loginTime = new Date().toISOString();
+            
+            await supabase
+                .from('student_accounts')
+                .update({ 
+                    last_login: loginTime,
+                    failed_attempts: 0,
+                    locked: false
+                })
+                .eq('id', account.id);
+
+            // Step 6: Log the login attempt
+            try {
+                await supabase
+                    .from('login_history')
+                    .insert({
+                        student_account_id: account.id,
+                        student_id: account.student_id,
+                        reg_id: regId,
+                        login_status: 'SUCCESS',
+                        login_time: loginTime
+                    });
+            } catch (logError) {
+                console.warn('Failed to log login:', logError);
+            }
+
+            // Step 7: Fetch student details
+            const { data: student } = await supabase
+                .from('students')
+                .select('full_name')
+                .eq('id', account.student_id)
+                .maybeSingle();
+
+            // Step 8: Create session
+            createSession(account, student);
+
+            // Step 9: Show success and redirect
+            showToast('success', 'Login Successful', 'Welcome back! Redirecting to your dashboard...');
+            setTimeout(() => {
+                window.location.href = REDIRECT_URL;
+            }, 1500);
+
+        } catch (error) {
+            console.error('Login error:', error);
+            showToast('error', 'System Error', error.message || 'An unexpected error occurred. Please try again.');
+            resetButton();
+        }
+    });
+
+    function resetButton() {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+    }
+
+})();
+</script>
+</body>
+</html>

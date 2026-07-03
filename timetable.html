@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>AL-ARABI EMS | Timetable</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:Inter,sans-serif;
+background:#f5f7fb;
+color:#0f172a;
+
+}
+
+header{
+
+background:linear-gradient(135deg,#065f46,#059669);
+padding:28px 20px;
+color:white;
+
+}
+
+header h1{
+
+font-family:Playfair Display,serif;
+font-size:30px;
+
+}
+
+header p{
+
+margin-top:8px;
+opacity:.9;
+
+}
+
+.container{
+
+width:95%;
+max-width:1200px;
+margin:30px auto;
+
+}
+
+.controls{
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+margin-bottom:25px;
+
+}
+
+select{
+
+height:50px;
+border:none;
+border-radius:14px;
+padding:0 15px;
+font-size:15px;
+background:white;
+box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}
+
+.card{
+
+background:white;
+border-radius:18px;
+padding:20px;
+box-shadow:0 10px 30px rgba(0,0,0,.08);
+overflow:auto;
+
+}
+
+table{
+
+width:100%;
+border-collapse:collapse;
+
+}
+
+th{
+
+background:#065f46;
+color:white;
+padding:16px;
+
+}
+
+td{
+
+padding:15px;
+border-bottom:1px solid #eee;
+
+}
+
+tr:hover{
+
+background:#f0fdf4;
+
+}
+
+.badge{
+
+background:#dcfce7;
+color:#065f46;
+padding:6px 12px;
+border-radius:50px;
+font-size:12px;
+font-weight:600;
+
+}
+
+.loading{
+
+text-align:center;
+padding:80px;
+font-size:18px;
+color:#666;
+
+}
+
+.empty{
+
+padding:80px;
+text-align:center;
+font-size:18px;
+color:#999;
+
+}
+
+@media(max-width:700px){
+
+table{
+
+font-size:13px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>Class Timetable</h1>
+
+<p>Live timetable updates from the Administration.</p>
+
+</header>
+
+<div class="container">
+
+<div class="controls">
+
+<select id="classFilter">
+
+<option value="">All Classes</option>
+
+</select>
+
+<select id="sessionFilter">
+
+<option value="">All Sessions</option>
+
+</select>
+
+</div>
+
+<div class="card">
+
+<div id="content" class="loading">
+
+Loading timetable...
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL="https://qqqxxbixuzdihfnmutpp.supabase.co";
+
+const SUPABASE_KEY="sb_publishable_oAqdfpvMyYEdeMzZuIb57w_muvQROpY";
+
+const db=supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+const content=document.getElementById("content");
+
+const classFilter=document.getElementById("classFilter");
+
+const sessionFilter=document.getElementById("sessionFilter");
+
+async function loadTimetable(){
+
+content.className="loading";
+
+content.innerHTML="Loading timetable...";
+
+let query=db
+
+.from("timetable")
+
+.select("*")
+
+.order("day")
+
+.order("start_time");
+
+if(classFilter.value){
+
+query=query.eq("class_name",classFilter.value);
+
+}
+
+if(sessionFilter.value){
+
+query=query.eq("session",sessionFilter.value);
+
+}
+
+const {data,error}=await query;
+
+if(error){
+
+content.innerHTML="<div class='empty'>Unable to load timetable.</div>";
+
+return;
+
+}
+
+if(data.length===0){
+
+content.innerHTML="<div class='empty'>No timetable available.</div>";
+
+return;
+
+}
+
+let html=`
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Day</th>
+
+<th>Time</th>
+
+<th>Subject</th>
+
+<th>Teacher</th>
+
+<th>Class</th>
+
+<th>Room</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+`;
+
+data.forEach(item=>{
+
+html+=`
+
+<tr>
+
+<td>${item.day}</td>
+
+<td>${item.start_time} - ${item.end_time}</td>
+
+<td>${item.subject}</td>
+
+<td>${item.teacher}</td>
+
+<td><span class="badge">${item.class_name}</span></td>
+
+<td>${item.room}</td>
+
+</tr>
+
+`;
+
+});
+
+html+="</tbody></table>";
+
+content.className="";
+
+content.innerHTML=html;
+
+}
+
+async function loadFilters(){
+
+const {data}=await db
+
+.from("timetable")
+
+.select("class_name,session");
+
+const classes=[...new Set(data.map(x=>x.class_name))];
+
+const sessions=[...new Set(data.map(x=>x.session))];
+
+classes.forEach(c=>{
+
+classFilter.innerHTML+=`<option>${c}</option>`;
+
+});
+
+sessions.forEach(s=>{
+
+sessionFilter.innerHTML+=`<option>${s}</option>`;
+
+});
+
+}
+
+classFilter.onchange=loadTimetable;
+
+sessionFilter.onchange=loadTimetable;
+
+loadFilters();
+
+loadTimetable();
+
+setInterval(loadTimetable,30000);
+
+</script>
+
+</body>
+</html>

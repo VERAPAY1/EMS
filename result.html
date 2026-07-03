@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<meta name="theme-color"
+content="#065f46">
+
+<title>AL-ARABI EMS | Student Result</title>
+
+<link rel="icon"
+href="assets/images/logo.png">
+
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+:root{
+
+--primary:#065f46;
+--primary2:#059669;
+
+--gold:#d4af37;
+
+--bg:#f5f7f9;
+
+--card:#ffffff;
+
+--text:#111827;
+
+--muted:#6b7280;
+
+--border:#e5e7eb;
+
+--radius:18px;
+
+}
+
+*{
+
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+}
+
+body{
+
+font-family:Inter,sans-serif;
+
+background:var(--bg);
+
+color:var(--text);
+
+}
+
+header{
+
+background:linear-gradient(135deg,#065f46,#059669);
+
+padding:35px 20px;
+
+text-align:center;
+
+color:#fff;
+
+}
+
+header img{
+
+width:85px;
+
+height:85px;
+
+border-radius:20px;
+
+background:#fff;
+
+padding:5px;
+
+margin-bottom:12px;
+
+}
+
+header h1{
+
+font-family:"Playfair Display",serif;
+
+font-size:33px;
+
+}
+
+header p{
+
+margin-top:8px;
+
+opacity:.9;
+
+}
+
+.container{
+
+max-width:1150px;
+
+margin:auto;
+
+padding:25px;
+
+}
+
+.searchCard{
+
+background:#fff;
+
+padding:25px;
+
+border-radius:20px;
+
+box-shadow:0 15px 35px rgba(0,0,0,.08);
+
+margin-bottom:25px;
+
+}
+
+.grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+gap:18px;
+
+}
+
+.field{
+
+display:flex;
+
+flex-direction:column;
+
+gap:8px;
+
+}
+
+label{
+
+font-size:13px;
+
+font-weight:600;
+
+}
+
+input,
+
+select{
+
+height:52px;
+
+border:1px solid var(--border);
+
+border-radius:14px;
+
+padding:0 15px;
+
+font-size:15px;
+
+outline:none;
+
+}
+
+input:focus,
+
+select:focus{
+
+border-color:var(--primary);
+
+}
+
+button{
+
+height:54px;
+
+margin-top:24px;
+
+border:none;
+
+border-radius:14px;
+
+background:linear-gradient(135deg,#065f46,#059669);
+
+color:#fff;
+
+font-size:15px;
+
+font-weight:700;
+
+cursor:pointer;
+
+}
+
+button:hover{
+
+opacity:.95;
+
+}
+
+#loading{
+
+display:none;
+
+text-align:center;
+
+padding:70px;
+
+font-size:18px;
+
+color:var(--muted);
+
+}
+
+#resultCard{
+
+display:none;
+
+background:#fff;
+
+padding:30px;
+
+border-radius:20px;
+
+box-shadow:0 15px 35px rgba(0,0,0,.08);
+
+}
+
+.studentTop{
+
+display:grid;
+
+grid-template-columns:130px 1fr;
+
+gap:25px;
+
+margin-bottom:25px;
+
+}
+
+.studentPhoto{
+
+width:120px;
+
+height:120px;
+
+border-radius:20px;
+
+background:#eee;
+
+overflow:hidden;
+
+}
+
+.studentPhoto img{
+
+width:100%;
+
+height:100%;
+
+object-fit:cover;
+
+}
+
+.studentInfo{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+gap:15px;
+
+}
+
+.info{
+
+background:#f8fafc;
+
+padding:15px;
+
+border-radius:14px;
+
+}
+
+.info h5{
+
+font-size:12px;
+
+color:gray;
+
+margin-bottom:5px;
+
+}
+
+.info p{
+
+font-weight:600;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+margin-top:25px;
+
+}
+
+th{
+
+background:#065f46;
+
+color:#fff;
+
+padding:15px;
+
+}
+
+td{
+
+padding:14px;
+
+border-bottom:1px solid #eee;
+
+text-align:center;
+
+}
+
+.summary{
+
+margin-top:25px;
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+gap:15px;
+
+}
+
+.box{
+
+background:#f9fafb;
+
+padding:18px;
+
+border-radius:16px;
+
+text-align:center;
+
+}
+
+.box h3{
+
+color:#065f46;
+
+margin-bottom:8px;
+
+}
+
+footer{
+
+margin:50px 0 20px;
+
+text-align:center;
+
+font-size:13px;
+
+color:#777;
+
+}
+
+@media(max-width:700px){
+
+.studentTop{
+
+grid-template-columns:1fr;
+
+text-align:center;
+
+}
+
+.studentPhoto{
+
+margin:auto;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="assets/images/logo.png">
+
+<h1>Student Result Portal</h1>
+
+<p>Official Academic Result Verification System</p>
+
+</header>
+
+<div class="container">
+
+<div class="searchCard">
+
+<div class="grid">
+
+<div class="field">
+
+<label>Registration Number</label>
+
+<input
+id="regNumber"
+placeholder="AES/2026/0001">
+
+</div>
+
+<div class="field">
+
+<label>Academic Session</label>
+
+<select
+id="session">
+
+<option value="">Select Session</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>Term / Semester</label>
+
+<select
+id="semester">
+
+<option value="">Select Semester</option>
+
+<option value="First Semester">First Semester</option>
+
+<option value="Second Semester">Second Semester</option>
+
+<option value="Third Term">Third Term</option>
+
+</select>
+
+</div>
+
+</div>
+
+<button
+id="searchBtn">
+
+Check Result
+
+</button>
+
+</div>
+
+<div
+id="loading">
+
+Loading Result...
+
+</div>
+
+<div
+id="resultCard">
+
+<div class="studentTop">
+
+<div class="studentPhoto">
+
+<img
+id="photo"
+src="assets/images/avatar.png">
+
+</div>
+
+<div class="studentInfo">
+
+<div class="info">
+
+<h5>Student Name</h5>
+
+<p id="studentName">-</p>
+
+</div>
+
+<div class="info">
+
+<h5>Registration Number</h5>
+
+<p id="studentReg">-</p>
+
+</div>
+
+<div class="info">
+
+<h5>Class</h5>
+
+<p id="studentClass">-</p>
+
+</div>
+
+<div class="info">
+
+<h5>Session</h5>
+
+<p id="studentSession">-</p>
+
+</div>
+
+<div class="info">
+
+<h5>Semester</h5>
+
+<p id="studentSemester">-</p>
+
+</div>
+
+<div class="info">
+
+<h5>Position</h5>
+
+<p id="studentPosition">-</p>
+
+</div>
+
+</div>
+
+</div>
+
+<table
+id="resultTable">
+
+<thead>
+
+<tr>
+
+<th>Subject</th>
+
+<th>CA</th>
+
+<th>Exam</th>
+
+<th>Total</th>
+
+<th>Grade</th>
+
+<th>Remark</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+</tbody>
+
+</table>
+
+<div class="summary">
+
+<div class="box">
+
+<h3>Total Score</h3>
+
+<p id="totalScore">0</p>
+
+</div>
+
+<div class="box">
+
+<h3>Average</h3>
+
+<p id="averageScore">0</p>
+
+</div>
+
+<div class="box">
+
+<h3>Grade</h3>
+
+<p id="overallGrade">-</p>
+
+</div>
+
+<div class="box">
+
+<h3>Remark</h3>
+
+<p id="overallRemark">-</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+
+© 2026 AL-ARABI EDUCATION MANAGEMENT SYSTEM
+
+</footer>
+
+<script>
+
+/* PART 2 CONTINUES */
+const SUPABASE_URL = "https://qqqxxbixuzdihfnmutpp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_oAqdfpvMyYEdeMzZuIb57w_muvQROpY";
+
+const db = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+const regInput = document.getElementById("regNumber");
+const sessionInput = document.getElementById("session");
+const semesterInput = document.getElementById("semester");
+
+const loading = document.getElementById("loading");
+const resultCard = document.getElementById("resultCard");
+
+async function loadSessions(){
+
+    const {data} = await db
+    .from("academic_sessions")
+    .select("*")
+    .order("session");
+
+    if(!data) return;
+
+    data.forEach(item=>{
+
+        sessionInput.innerHTML += `
+        <option value="${item.session}">
+            ${item.session}
+        </option>
+        `;
+
+    });
+
+}
+
+loadSessions();
+
+document
+.getElementById("searchBtn")
+.addEventListener("click",loadResult);
+
+async function loadResult(){
+
+    const reg = regInput.value.trim().toUpperCase();
+
+    const session = sessionInput.value;
+
+    const semester = semesterInput.value;
+
+    if(!reg){
+
+        alert("Enter Registration Number");
+
+        return;
+
+    }
+
+    if(!session){
+
+        alert("Select Session");
+
+        return;
+
+    }
+
+    if(!semester){
+
+        alert("Select Semester");
+
+        return;
+
+    }
+
+    loading.style.display="block";
+
+    resultCard.style.display="none";
+
+    const {data:student,error} = await db
+
+    .from("student_results")
+
+    .select("*")
+
+    .eq("reg_id",reg)
+
+    .eq("session",session)
+
+    .eq("semester",semester);
+
+    loading.style.display="none";
+
+    if(error){
+
+        alert(error.message);
+
+        return;
+
+    }
+
+    if(student.length===0){
+
+        alert("Result not found.");
+
+        return;
+
+    }
+
+    resultCard.style.display="block";
+
+    const first = student[0];
+
+    document.getElementById("studentName").textContent=first.student_name;
+
+    document.getElementById("studentReg").textContent=first.reg_id;
+
+    document.getElementById("studentClass").textContent=first.class_name;
+
+    document.getElementById("studentSession").textContent=first.session;
+
+    document.getElementById("studentSemester").textContent=first.semester;
+
+    document.getElementById("studentPosition").textContent=first.position ?? "-";
+
+    document.getElementById("photo").src=
+    first.photo_url || "assets/images/avatar.png";
+
+    const tbody=document.querySelector("#resultTable tbody");
+
+    tbody.innerHTML="";
+
+    let total=0;
+
+    student.forEach(row=>{
+
+        total+=Number(row.total);
+
+        tbody.innerHTML+=`
+
+        <tr>
+
+        <td>${row.subject}</td>
+
+        <td>${row.ca}</td>
+
+        <td>${row.exam}</td>
+
+        <td>${row.total}</td>
+
+        <td>${row.grade}</td>
+
+        <td>${row.remark}</td>
+
+        </tr>
+
+        `;
+
+    });
+
+    const average=(total/student.length).toFixed(2);
+
+    document.getElementById("totalScore").textContent=total;
+
+    document.getElementById("averageScore").textContent=average;
+
+    let overallGrade="F";
+
+    let remark="Fail";
+
+    if(average>=70){
+
+        overallGrade="A";
+
+        remark="Excellent";
+
+    }
+
+    else if(average>=60){
+
+        overallGrade="B";
+
+        remark="Very Good";
+
+    }
+
+    else if(average>=50){
+
+        overallGrade="C";
+
+        remark="Good";
+
+    }
+
+    else if(average>=45){
+
+        overallGrade="D";
+
+        remark="Pass";
+
+    }
+
+    document.getElementById("overallGrade").textContent=overallGrade;
+
+    document.getElementById("overallRemark").textContent=remark;
+
+}
+
+window.addEventListener("online",()=>{
+
+    console.log("Internet Connected");
+
+});
+
+window.addEventListener("offline",()=>{
+
+    alert("No Internet Connection");
+
+});
+</script>
+
+</body>
+
+</html>
